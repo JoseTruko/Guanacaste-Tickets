@@ -18,7 +18,15 @@ export async function POST(req: Request) {
   const body: Property = await req.json();
   const { data, error } = await supabaseAdmin
     .from('properties')
-    .insert(body)
+    .insert({
+      id: body.id,
+      title: body.title,
+      location: body.location,
+      price: body.price,
+      currency: body.currency,
+      image: body.image,
+      contact_url: body.contactUrl,
+    })
     .select()
     .single();
 
