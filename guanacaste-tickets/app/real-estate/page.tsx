@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import { getAllPropertiesFromDB } from '@/lib/data/properties-db';
 
+export const revalidate = 0;
+
 export const metadata: Metadata = {
   title: 'Properties in Guanacaste',
   description:

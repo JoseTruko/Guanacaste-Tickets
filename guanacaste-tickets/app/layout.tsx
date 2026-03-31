@@ -19,6 +19,8 @@ const inter = Inter({
   display: 'swap',
 });
 
+export const revalidate = 0;
+
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
