@@ -102,8 +102,14 @@ export default function Header() {
       </div>
 
       {/* Mobile menu */}
-      {menuOpen && (
-        <nav className="md:hidden border-t border-gray-100 bg-white px-4 py-3 flex flex-col gap-3" aria-label="Mobile navigation">
+      <nav
+        className={`md:hidden border-t border-gray-100 bg-white px-4 overflow-hidden transition-all duration-300 ease-in-out ${
+          menuOpen ? 'max-h-96 py-3 opacity-100' : 'max-h-0 py-0 opacity-0'
+        }`}
+        aria-label="Mobile navigation"
+        aria-hidden={!menuOpen}
+      >
+        <div className="flex flex-col gap-3">
           {navLinks.map((link) => (
             <Link
               key={link.href}
@@ -125,8 +131,8 @@ export default function Header() {
             </svg>
             WhatsApp
           </a>
-        </nav>
-      )}
+        </div>
+      </nav>
     </header>
   );
 }

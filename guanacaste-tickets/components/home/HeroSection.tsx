@@ -3,10 +3,10 @@ import Button from '@/components/ui/Button';
 
 export default function HeroSection() {
   return (
-    <section className="relative min-h-[80vh] flex items-center justify-center text-center overflow-hidden">
+    <section className="relative flex items-center justify-center text-center overflow-hidden" style={{ height: 'calc(100vh - 4rem)' }}>
       {/* Background image */}
       <Image
-        src="/images/hero-image.webp"
+        src="/images/lapa.webp"
         alt="Guanacaste, Costa Rica"
         fill
         priority

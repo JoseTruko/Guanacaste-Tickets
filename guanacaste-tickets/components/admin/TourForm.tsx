@@ -21,12 +21,20 @@ export default function TourForm({ initial, onSave, password }: Props) {
 
   const set = (field: keyof Tour, value: unknown) => setT((prev) => ({ ...prev, [field]: value }));
   const setArr = (field: keyof Tour, value: string) =>
-    set(field, value.split('\n').map((s) => s.trim()).filter(Boolean));
+    set(field, value.split('\n').map((s) => s.trimEnd()));
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
-    await onSave({ ...t, slug: t.slug || t.title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') });
+    const cleaned = {
+      ...t,
+      included: t.included.filter(Boolean),
+      notIncluded: t.notIncluded.filter(Boolean),
+      whatToBring: t.whatToBring.filter(Boolean),
+      languages: t.languages.filter(Boolean),
+      slug: t.slug || t.title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''),
+    };
+    await onSave(cleaned);
     setSaving(false);
   };
 
