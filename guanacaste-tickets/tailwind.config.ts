@@ -1,0 +1,46 @@
+import type { Config } from 'tailwindcss';
+
+/**
+ * Tailwind CSS v4 configuration.
+ * Design tokens are primarily defined via CSS variables in styles/globals.css.
+ * This file extends Tailwind with named utilities for the design tokens.
+ */
+const config: Config = {
+  content: [
+    './app/**/*.{js,ts,jsx,tsx,mdx}',
+    './components/**/*.{js,ts,jsx,tsx,mdx}',
+    './lib/**/*.{js,ts,jsx,tsx,mdx}',
+  ],
+  theme: {
+    extend: {
+      colors: {
+        primary: 'var(--color-primary)',
+        secondary: 'var(--color-secondary)',
+        tertiary: 'var(--color-tertiary)',
+        neutral: 'var(--color-neutral)',
+        bg: 'var(--color-bg)',
+        surface: 'var(--color-surface)',
+      },
+      fontFamily: {
+        heading: ['Poppins', 'sans-serif'],
+        body: ['Inter', 'sans-serif'],
+      },
+      spacing: {
+        xs: 'var(--spacing-xs)',
+        sm: 'var(--spacing-sm)',
+        md: 'var(--spacing-md)',
+        lg: 'var(--spacing-lg)',
+        xl: 'var(--spacing-xl)',
+        '2xl': 'var(--spacing-2xl)',
+      },
+      borderRadius: {
+        sm: 'var(--radius-sm)',
+        md: 'var(--radius-md)',
+        lg: 'var(--radius-lg)',
+      },
+    },
+  },
+  plugins: [],
+};
+
+export default config;
