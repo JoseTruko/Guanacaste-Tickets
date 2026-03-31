@@ -32,13 +32,17 @@ export default async function RealEstatePage() {
               className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden flex flex-col"
             >
               <div className="relative w-full h-52">
-                <Image
-                  src={property.image}
-                  alt={property.title}
-                  fill
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  className="object-cover"
-                />
+                {property.image ? (
+                  <Image
+                    src={property.image}
+                    alt={property.title}
+                    fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    className="object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-400 text-sm">No image</div>
+                )}
               </div>
               <div className="p-5 flex flex-col gap-2 flex-1">
                 <h2 className="font-heading font-semibold text-gray-900 text-base leading-snug">

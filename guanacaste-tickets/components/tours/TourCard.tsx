@@ -24,13 +24,17 @@ export default function TourCard({ tour, variant = 'standard' }: TourCardProps) 
     <article className="group flex flex-col bg-white rounded-lg shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden h-full">
       {/* Image */}
       <div className="relative w-full h-48 overflow-hidden">
-        <Image
-          src={tour.images[0]}
-          alt={`${tour.title} tour`}
-          fill
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          className="object-cover group-hover:scale-105 transition-transform duration-500"
-        />
+        {tour.images[0] ? (
+          <Image
+            src={tour.images[0]}
+            alt={`${tour.title} tour`}
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            className="object-cover group-hover:scale-105 transition-transform duration-500"
+          />
+        ) : (
+          <div className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-400 text-sm">No image</div>
+        )}
         {/* Badges overlay */}
         <div className="absolute top-2 left-2 flex flex-col gap-1">
           {variant === 'featured' && (

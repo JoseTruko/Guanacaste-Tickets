@@ -24,13 +24,17 @@ export default async function RealEstateSection() {
             <Reveal key={property.id} delay={i * 100}>
               <article className="group bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-lg hover:-translate-y-1 transition-all duration-300 h-full">
                 <div className="relative w-full h-48 overflow-hidden">
-                  <Image
-                    src={property.image}
-                    alt={property.title}
-                    fill
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                    className="object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
+                  {property.image ? (
+                    <Image
+                      src={property.image}
+                      alt={property.title}
+                      fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-400 text-sm">No image</div>
+                  )}
                 </div>
                 <div className="p-4 flex flex-col gap-2 flex-1">
                   <h3 className="font-heading font-semibold text-gray-900 text-base leading-snug">
