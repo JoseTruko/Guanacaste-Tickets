@@ -11,7 +11,7 @@ export default async function DealsSection() {
       <div className="max-w-7xl mx-auto">
         <Reveal>
           <h2 className="font-heading font-bold text-3xl md:text-4xl text-gray-900 mb-8 text-center">
-            🔥 Hot Deals
+            Hot Deals
           </h2>
         </Reveal>
 
