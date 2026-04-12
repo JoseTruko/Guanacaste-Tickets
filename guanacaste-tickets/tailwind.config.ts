@@ -22,8 +22,8 @@ const config: Config = {
         surface: 'var(--color-surface)',
       },
       fontFamily: {
-        heading: ['Poppins', 'sans-serif'],
-        body: ['Inter', 'sans-serif'],
+        heading: ['var(--font-heading)', 'Georgia', 'serif'],
+        body: ['var(--font-body)', 'system-ui', 'sans-serif'],
       },
       spacing: {
         xs: 'var(--spacing-xs)',

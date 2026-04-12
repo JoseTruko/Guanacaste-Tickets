@@ -57,6 +57,13 @@ export default function ContactPage() {
             </div>
 
             <div className="border-t border-gray-100 pt-6">
+              <h3 className="font-semibold text-gray-900 mb-2">Email</h3>
+              <a href="mailto:info@guanacastetickets.com" className="text-[#0077B6] hover:underline text-sm">
+                info@guanacastetickets.com
+              </a>
+            </div>
+
+            <div className="border-t border-gray-100 pt-6">
               <h3 className="font-semibold text-gray-900 mb-2">Business Hours</h3>
               <p className="text-gray-500 text-sm">Monday – Sunday: 7:00 am – 8:00 pm (CST)</p>
             </div>
