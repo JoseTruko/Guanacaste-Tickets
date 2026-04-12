@@ -32,7 +32,7 @@ export default function TourForm({ initial, onSave, password }: Props) {
       notIncluded: t.notIncluded.filter(Boolean),
       whatToBring: t.whatToBring.filter(Boolean),
       languages: t.languages.filter(Boolean),
-      slug: t.slug || t.title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''),
+      slug: t.title.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').trim(),
     };
     await onSave(cleaned);
     setSaving(false);
@@ -80,7 +80,6 @@ export default function TourForm({ initial, onSave, password }: Props) {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {field('Title', 'title')}
-        {field('Slug (auto-generated if empty)', 'slug')}
       </div>
 
       {textarea('Short Description', 'shortDescription', 2)}

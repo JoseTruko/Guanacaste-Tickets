@@ -11,10 +11,9 @@ interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
-export async function generateStaticParams() {
-  const tours = await getAllToursFromDB();
-  return tours.map((tour) => ({ slug: tour.slug }));
-}
+// Allow new tours added after build to be served on-demand
+export const dynamicParams = true;
+export const revalidate = 0;
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
