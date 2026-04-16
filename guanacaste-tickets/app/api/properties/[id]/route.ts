@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase/client';
+import { propertyToDb } from '../route';
 import type { Property } from '@/types/index';
 
 type Params = { params: Promise<{ id: string }> };
@@ -13,10 +14,11 @@ export async function PUT(req: Request, { params }: Params) {
 
   const { id } = await params;
   const body: Property = await req.json();
+  const slug = body.title.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').trim();
 
   const { data, error } = await supabaseAdmin
     .from('properties')
-    .update({ title: body.title, location: body.location, price: body.price, image: body.image, contact_url: body.contactUrl })
+    .update(propertyToDb({ ...body, slug }))
     .eq('id', id)
     .select()
     .single();

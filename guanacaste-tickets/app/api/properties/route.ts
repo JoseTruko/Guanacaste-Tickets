@@ -16,17 +16,11 @@ export async function POST(req: Request) {
   if (!isAdmin(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const body: Property = await req.json();
+  const slug = body.title.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').trim();
+
   const { data, error } = await supabaseAdmin
     .from('properties')
-    .insert({
-      id: body.id,
-      title: body.title,
-      location: body.location,
-      price: body.price,
-      currency: body.currency,
-      image: body.image,
-      contact_url: body.contactUrl,
-    })
+    .insert(propertyToDb({ ...body, slug }))
     .select()
     .single();
 
@@ -36,4 +30,31 @@ export async function POST(req: Request) {
 
 function isAdmin(req: Request) {
   return req.headers.get('x-admin-password') === process.env.ADMIN_PASSWORD;
+}
+
+export function propertyToDb(p: Property) {
+  return {
+    id: p.id,
+    slug: p.slug,
+    title: p.title,
+    short_description: p.shortDescription,
+    description: p.description,
+    location: p.location,
+    price: p.price,
+    currency: p.currency,
+    property_type: p.propertyType,
+    status: p.status,
+    built_area: p.builtArea,
+    land_area: p.landArea,
+    bedrooms: p.bedrooms,
+    bathrooms: p.bathrooms,
+    parking: p.parking,
+    year_built: p.yearBuilt,
+    amenities: p.amenities,
+    image: p.image,
+    images: p.images,
+    video_url: p.videoUrl,
+    floor_plan_url: p.floorPlanUrl,
+    contact_url: p.contactUrl,
+  };
 }
