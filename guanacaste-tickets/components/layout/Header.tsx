@@ -22,9 +22,8 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 font-heading font-bold text-xl text-[#0077B6]">
-            <span aria-hidden="true">🌴</span>
-            <span>Guanacaste Tickets</span>
+          <Link href="/" className="flex items-center gap-2">
+            <img src="/logo.svg" alt="Guanacaste Tickets" className="h-28 w-auto" />
           </Link>
 
           {/* Desktop nav */}

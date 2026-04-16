@@ -23,6 +23,9 @@ export const revalidate = 0;
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
+  icons: {
+    icon: '/favicon.svg',
+  },
   title: {
     default: 'Guanacaste Tickets | Tours in Costa Rica',
     template: '%s | Guanacaste Tickets',

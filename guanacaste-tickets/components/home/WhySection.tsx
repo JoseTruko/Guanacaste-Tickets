@@ -9,7 +9,7 @@ const valueProps = [
       </svg>
     ),
     title: 'Local Experts',
-    description: 'Born and raised in Guanacaste, we know every hidden gem.',
+    description: 'We know everything about Guanacaste.',
   },
   {
     icon: (
@@ -18,16 +18,7 @@ const valueProps = [
       </svg>
     ),
     title: 'Best Price Guarantee',
-    description: 'We match any price. Book with confidence.',
-  },
-  {
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-    ),
-    title: 'Free Cancellation',
-    description: 'Most tours offer free cancellation up to 24h before.',
+    description: 'Competitive prices. Book with complete confidence.',
   },
   {
     icon: (
@@ -36,7 +27,7 @@ const valueProps = [
       </svg>
     ),
     title: 'Instant Confirmation',
-    description: 'Get your booking confirmed via WhatsApp in minutes.',
+    description: 'Confirm your reservation in minutes.',
   },
 ];
 
@@ -50,10 +41,10 @@ export default function WhySection() {
           </h2>
         </Reveal>
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="flex flex-wrap justify-center gap-6">
           {valueProps.map((vp, i) => (
             <Reveal key={vp.title} delay={i * 100}>
-              <div className="flex flex-col items-center text-center gap-3 bg-white rounded-xl p-6 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 h-full">
+              <div className="flex flex-col items-center text-center gap-3 bg-white rounded-xl p-6 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 w-64">
                 <div className="text-secondary">{vp.icon}</div>
                 <h3 className="font-heading font-bold text-gray-900 text-base leading-snug">
                   {vp.title}

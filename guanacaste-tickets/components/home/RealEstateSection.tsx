@@ -12,7 +12,7 @@ export default async function RealEstateSection() {
         <Reveal>
           <div className="text-center mb-10">
             <h2 className="font-heading font-bold text-3xl md:text-4xl text-gray-900">
-              🏡 Properties in Guanacaste
+            Properties in Guanacaste
             </h2>
             <p className="text-gray-500 mt-2 text-base">
               Explore real estate opportunities in Costa Rica&apos;s most sought-after region
