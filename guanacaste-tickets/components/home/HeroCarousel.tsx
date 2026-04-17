@@ -44,7 +44,7 @@ export default function HeroCarousel({ images }: Props) {
             Handpicked tours with local experts.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 animate-fade-up delay-400">
-            <Link href="/tours" className="inline-flex items-center justify-center bg-[#0077B6] text-white font-semibold px-8 py-3 rounded-lg hover:bg-[#005f8e] transition-colors text-base shadow-lg">
+            <Link href="/tours" className="inline-flex items-center justify-center bg-primary text-white font-semibold px-8 py-3 rounded-lg hover:bg-primary-hover transition-colors text-base shadow-lg">
               Browse Tours
             </Link>
           </div>

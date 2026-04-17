@@ -35,7 +35,7 @@ export default async function RealEstatePage() {
                   <div className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-400 text-sm">No image</div>
                 )}
                 {property.status && (
-                  <span className={`absolute top-2 left-2 text-xs font-semibold px-2 py-1 rounded-full ${property.status === 'For Sale' ? 'bg-blue-100 text-blue-800' : property.status === 'For Rent' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'}`}>
+                  <span className={`absolute top-2 left-2 text-xs font-semibold px-2 py-1 rounded-full ${property.status === 'For Sale' ? 'bg-primary/10 text-primary' : property.status === 'For Rent' ? 'bg-secondary/10 text-secondary' : 'bg-surface text-neutral'}`}>
                     {property.status}
                   </span>
                 )}

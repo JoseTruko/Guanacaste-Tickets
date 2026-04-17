@@ -1,8 +1,8 @@
 type Variant = 'featured' | 'free-cancellation' | 'default';
 
 const variantClasses: Record<Variant, string> = {
-  featured: 'bg-[#FFB347] text-gray-900',
-  'free-cancellation': 'bg-[#2D5A27] text-white',
+  featured: 'bg-tertiary text-gray-900',
+  'free-cancellation': 'bg-secondary text-white',
   default: 'bg-gray-100 text-gray-700',
 };
 

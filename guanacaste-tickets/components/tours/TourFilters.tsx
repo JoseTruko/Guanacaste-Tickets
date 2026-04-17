@@ -29,8 +29,8 @@ export default function TourFilters({ tours, onFilter }: TourFiltersProps) {
           onClick={() => setCategory(cat)}
           className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-colors duration-150 ${
             category === cat
-              ? 'bg-[#0077B6] text-white border-[#0077B6]'
-              : 'bg-white text-gray-600 border-gray-300 hover:border-[#0077B6] hover:text-[#0077B6]'
+              ? 'bg-primary text-white border-primary'
+              : 'bg-white text-gray-600 border-gray-300 hover:border-primary hover:text-primary'
           }`}
         >
           {cat}

@@ -9,7 +9,7 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <div className="mb-3">
-              <img src="/logo.svg" alt="Guanacaste Tickets" className="h-28 w-auto brightness-0 invert" />
+              <img src="/logo.svg" alt="Guanacaste Tickets" className="h-22 w-auto brightness-0 invert" />
             </div>
             <p className="text-green-200 text-sm leading-relaxed">
               Your trusted source for tours and experiences in Guanacaste, Costa Rica.

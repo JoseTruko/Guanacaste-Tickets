@@ -82,7 +82,7 @@ export default function TermsPage() {
           <h2 className="font-heading font-semibold text-xl text-gray-900 mb-2">8. Contact</h2>
           <p>
             For questions about these Terms of Service, please contact us through our{' '}
-            <a href="/contact" className="text-[#0077B6] hover:underline">contact page</a>.
+            <a href="/contact" className="text-primary hover:underline">contact page</a>.
           </p>
         </section>
       </div>

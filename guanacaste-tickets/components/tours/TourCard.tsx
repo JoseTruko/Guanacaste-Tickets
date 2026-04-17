@@ -53,7 +53,7 @@ export default function TourCard({ tour, variant = 'standard' }: TourCardProps) 
         </div>
         <div className="flex items-center justify-between">
           <p className="text-white font-bold text-sm">From ${tour.price} USD</p>
-          <span className="bg-[#0077B6] text-white text-xs font-semibold px-3 py-1 rounded-lg">Book Now →</span>
+          <span className="bg-primary text-white text-xs font-semibold px-3 py-1 rounded-lg">Book Now →</span>
         </div>
       </div>
 
@@ -75,7 +75,7 @@ export default function TourCard({ tour, variant = 'standard' }: TourCardProps) 
         </div>
         <div className="flex items-center justify-between">
           <p className="text-white font-bold text-base">From ${tour.price} USD</p>
-          <span className="bg-[#0077B6] text-white text-sm font-semibold px-4 py-1.5 rounded-lg">Book Now →</span>
+          <span className="bg-primary text-white text-sm font-semibold px-4 py-1.5 rounded-lg">Book Now →</span>
         </div>
       </div>
     </Link>

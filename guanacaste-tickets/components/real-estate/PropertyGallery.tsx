@@ -49,7 +49,7 @@ export default function PropertyGallery({ images, title }: Props) {
           <div className="flex gap-2 overflow-x-auto pb-1">
             {images.map((src, i) => (
               <button key={i} onClick={() => setActive(i)}
-                className={`relative flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-colors ${i === active ? 'border-[#0077B6]' : 'border-transparent'}`}>
+                className={`relative flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-colors ${i === active ? 'border-primary' : 'border-transparent'}`}>
                 <Image src={src} alt={`${title} ${i + 1}`} fill sizes="80px" className="object-cover" />
               </button>
             ))}

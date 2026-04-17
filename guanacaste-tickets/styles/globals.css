@@ -6,12 +6,18 @@
 
 @theme {
   /* Colors */
-  --color-primary: #0077B6;
+  --color-primary: #054f6f;
+  --color-primary-hover: #043d57;
+  --color-primary-active: #032e42;
   --color-secondary: #2D5A27;
+  --color-secondary-hover: #234820;
+  --color-secondary-active: #1b3618;
   --color-tertiary: #FFB347;
   --color-neutral: #74777C;
   --color-bg: #FFFFFF;
   --color-surface: #F8F9FA;
+  --color-whatsapp: #25D366;
+  --color-whatsapp-hover: #1ebe5d;
 
   /* Fonts */
   --font-heading: 'Poppins', sans-serif;
@@ -25,12 +31,18 @@
 
 :root {
   /* Colors */
-  --color-primary: #0077B6;
+  --color-primary: #054f6f;
+  --color-primary-hover: #043d57;
+  --color-primary-active: #032e42;
   --color-secondary: #2D5A27;
+  --color-secondary-hover: #234820;
+  --color-secondary-active: #1b3618;
   --color-tertiary: #FFB347;
   --color-neutral: #74777C;
   --color-bg: #FFFFFF;
   --color-surface: #F8F9FA;
+  --color-whatsapp: #25D366;
+  --color-whatsapp-hover: #1ebe5d;
 
   /* Fonts */
   --font-heading: 'Poppins', sans-serif;

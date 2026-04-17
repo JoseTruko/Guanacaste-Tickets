@@ -79,10 +79,10 @@ export default async function TourPage({ params }: PageProps) {
             {/* Header info */}
             <div className="space-y-3">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="inline-block bg-[#0077B6] text-white text-xs font-semibold px-3 py-1 rounded-full">
+                <span className="inline-block bg-primary text-white text-xs font-semibold px-3 py-1 rounded-full">
                   {tour.category}
                 </span>
-                <span className="inline-block bg-gray-100 text-gray-700 text-xs font-medium px-3 py-1 rounded-full">
+                <span className="inline-block bg-surface text-neutral text-xs font-medium px-3 py-1 rounded-full">
                   {tour.difficulty}
                 </span>
               </div>
@@ -96,15 +96,15 @@ export default async function TourPage({ params }: PageProps) {
 
             {/* Pricing */}
             <div className="flex gap-6">
-              <div className="bg-blue-50 rounded-xl px-5 py-4 text-center">
-                <p className="text-xs text-gray-500 mb-1">Adult</p>
-                <p className="text-2xl font-bold text-[#0077B6]">${tour.price}</p>
-                <p className="text-xs text-gray-400">USD / person</p>
+              <div className="bg-primary/10 rounded-xl px-5 py-4 text-center">
+                <p className="text-xs text-neutral mb-1">Adult</p>
+                <p className="text-2xl font-bold text-primary">${tour.price}</p>
+                <p className="text-xs text-neutral">USD / person</p>
               </div>
-              <div className="bg-green-50 rounded-xl px-5 py-4 text-center">
-                <p className="text-xs text-gray-500 mb-1">Child</p>
-                <p className="text-2xl font-bold text-[#2D5A27]">${tour.childPrice}</p>
-                <p className="text-xs text-gray-400">USD / person</p>
+              <div className="bg-secondary/10 rounded-xl px-5 py-4 text-center">
+                <p className="text-xs text-neutral mb-1">Child</p>
+                <p className="text-2xl font-bold text-secondary">${tour.childPrice}</p>
+                <p className="text-xs text-neutral">USD / person</p>
               </div>
             </div>
 

@@ -15,11 +15,17 @@ const config: Config = {
     extend: {
       colors: {
         primary: 'var(--color-primary)',
+        'primary-hover': 'var(--color-primary-hover)',
+        'primary-active': 'var(--color-primary-active)',
         secondary: 'var(--color-secondary)',
+        'secondary-hover': 'var(--color-secondary-hover)',
+        'secondary-active': 'var(--color-secondary-active)',
         tertiary: 'var(--color-tertiary)',
         neutral: 'var(--color-neutral)',
         bg: 'var(--color-bg)',
         surface: 'var(--color-surface)',
+        whatsapp: 'var(--color-whatsapp)',
+        'whatsapp-hover': 'var(--color-whatsapp-hover)',
       },
       fontFamily: {
         heading: ['var(--font-heading)', 'Georgia', 'serif'],
