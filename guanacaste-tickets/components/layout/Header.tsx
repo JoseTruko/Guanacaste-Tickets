@@ -23,7 +23,7 @@ export default function Header() {
         <div className="flex items-center justify-between h-22">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
-            <img src="/logo.svg" alt="Guanacaste Tickets" className="h-10 w-auto max-w-[160px] md:max-w-none md:h-15" />
+            <img src="/logo.svg" alt="Guanacaste Tickets" className="h-12 w-auto md:h-15" style={{ minWidth: '180px' }} />
           </Link>
 
           {/* Desktop nav */}
