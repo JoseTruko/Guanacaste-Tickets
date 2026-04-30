@@ -23,7 +23,7 @@ export default function TourCard({ tour, variant = 'standard' }: TourCardProps) 
   return (
     <Link
       href={`/tours/${tour.slug}`}
-      className="group relative block rounded-xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 aspect-[4/5]"
+      className="group relative block rounded-xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 aspect-square"
     >
       {/* Image */}
       {tour.images[0] ? (

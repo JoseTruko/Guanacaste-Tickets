@@ -1,36 +1,32 @@
-import Link from 'next/link';
-import TourCard from '@/components/tours/TourCard';
 import Reveal from '@/components/ui/Reveal';
-import { getFeaturedToursFromDB } from '@/lib/data/tours-db';
+import Script from 'next/script';
 
-export default async function DealsSection() {
-  const featuredTours = await getFeaturedToursFromDB();
-
+export default function DealsSection() {
   return (
     <section id="deals" className="py-16 px-4 bg-bg">
       <div className="max-w-7xl mx-auto">
         <Reveal>
-          <h2 className="font-heading font-bold text-3xl md:text-4xl text-gray-900 mb-8 text-center">
+          <h2 className="font-heading font-bold text-3xl md:text-4xl text-gray-900 mb-2 text-center">
             Hot Deals
           </h2>
+          <p className="text-center text-neutral mb-10">
+            Top experiences curated by our trusted local provider
+          </p>
         </Reveal>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {featuredTours.map((tour, i) => (
-            <Reveal key={tour.id} delay={i * 100}>
-              <TourCard tour={tour} variant="featured" />
-            </Reveal>
-          ))}
+        {/* Bokun widget */}
+        <div className="bokun-wrapper">
+          <div
+            className="bokunWidget"
+            data-src="https://widgets.bokun.io/online-sales/e75ced95-7cfd-4bdf-acfe-c97be1faa9bf/product-list/106270"
+          />
+          <noscript>Please enable javascript in your browser to book</noscript>
         </div>
 
-        <Reveal className="mt-10 text-center">
-          <Link
-            href="/tours"
-            className="inline-flex items-center gap-2 text-primary font-semibold hover:underline text-base"
-          >
-            View All Tours →
-          </Link>
-        </Reveal>
+        <Script
+          src="https://widgets.bokun.io/assets/javascripts/apps/build/BokunWidgetsLoader.js?bookingChannelUUID=e75ced95-7cfd-4bdf-acfe-c97be1faa9bf"
+          strategy="lazyOnload"
+        />
       </div>
     </section>
   );

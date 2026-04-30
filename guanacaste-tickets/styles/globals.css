@@ -142,3 +142,18 @@ summary:focus-visible {
   outline-offset: 2px;
   border-radius: var(--radius-sm);
 }
+
+/* ============================================================
+   Bokun Widget overrides
+   ============================================================ */
+
+.bokun-wrapper {
+  width: 100%;
+}
+
+/* Force widget to use site font */
+.bokun-wrapper iframe,
+.bokunWidget {
+  width: 100% !important;
+  font-family: var(--font-body) !important;
+}
