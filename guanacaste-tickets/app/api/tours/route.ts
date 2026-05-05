@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { supabase, supabaseAdmin } from '@/lib/supabase/client';
+import { getAllTours } from '@/lib/data/tours';
 import type { Tour } from '@/types/index';
 
 export async function GET() {
@@ -8,7 +9,9 @@ export async function GET() {
     .select('*')
     .order('created_at', { ascending: false });
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error || !data || data.length === 0) {
+    return NextResponse.json(getAllTours());
+  }
   return NextResponse.json(data.map(dbToTour));
 }
 

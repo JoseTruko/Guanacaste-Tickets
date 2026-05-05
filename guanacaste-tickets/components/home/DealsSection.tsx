@@ -1,5 +1,6 @@
 import Reveal from '@/components/ui/Reveal';
-import Script from 'next/script';
+import Link from 'next/link';
+import BokunWidget from '@/components/tours/BokunWidget';
 
 export default function DealsSection() {
   return (
@@ -7,26 +8,28 @@ export default function DealsSection() {
       <div className="max-w-7xl mx-auto">
         <Reveal>
           <h2 className="font-heading font-bold text-3xl md:text-4xl text-gray-900 mb-2 text-center">
-            Hot Deals
+            Tours in Guanacaste
           </h2>
           <p className="text-center text-neutral mb-10">
-            Top experiences curated by our trusted local provider
+            Curated by our local team — book directly, no middlemen.
           </p>
         </Reveal>
 
-        {/* Bokun widget */}
-        <div className="bokun-wrapper">
-          <div
-            className="bokunWidget"
-            data-src="https://widgets.bokun.io/online-sales/e75ced95-7cfd-4bdf-acfe-c97be1faa9bf/product-list/106270"
-          />
-          <noscript>Please enable javascript in your browser to book</noscript>
-        </div>
+        <BokunWidget />
 
-        <Script
-          src="https://widgets.bokun.io/assets/javascripts/apps/build/BokunWidgetsLoader.js?bookingChannelUUID=e75ced95-7cfd-4bdf-acfe-c97be1faa9bf"
-          strategy="lazyOnload"
-        />
+        <Reveal>
+          <div className="mt-10 text-center">
+            <Link
+              href="/tours"
+              className="inline-flex items-center gap-2 text-primary font-semibold text-sm hover:text-primary-hover transition-colors"
+            >
+              See all available tours
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
+          </div>
+        </Reveal>
       </div>
     </section>
   );

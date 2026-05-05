@@ -84,7 +84,7 @@ export default function Footer() {
         </div>
 
         <div className="mt-10 pt-6 border-t border-green-700 text-center text-green-300 text-sm">
-          © 2025 Guanacaste Tickets. All rights reserved.
+          © 2026 Guanacaste Tickets. All rights reserved.
         </div>
       </div>
     </footer>
