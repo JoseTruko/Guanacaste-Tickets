@@ -115,7 +115,7 @@ export default function BookingForm({ tour }: BookingFormProps) {
           type="date"
           min={todayStr()}
           {...register('date')}
-          className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0077B6]"
+          className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
         />
         {errors.date && (
           <p className="mt-1 text-xs text-red-600">{errors.date.message}</p>
@@ -132,7 +132,7 @@ export default function BookingForm({ tour }: BookingFormProps) {
           type="text"
           placeholder="Jane Doe"
           {...register('name')}
-          className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0077B6]"
+          className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
         />
         {errors.name && (
           <p className="mt-1 text-xs text-red-600">{errors.name.message}</p>
@@ -149,7 +149,7 @@ export default function BookingForm({ tour }: BookingFormProps) {
           type="email"
           placeholder="jane@example.com"
           {...register('email')}
-          className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0077B6]"
+          className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
         />
         {errors.email && (
           <p className="mt-1 text-xs text-red-600">{errors.email.message}</p>
@@ -179,7 +179,7 @@ export default function BookingForm({ tour }: BookingFormProps) {
         <button
           type="button"
           onClick={handleSubmit(onAddToCart)}
-          className="w-full bg-[#2D5A27] text-white font-semibold py-2.5 rounded-md hover:bg-[#234820] transition-colors"
+          className="w-full bg-secondary text-white font-semibold py-2.5 rounded-md hover:bg-secondary-hover transition-colors"
         >
           Add to Cart
         </button>
@@ -187,7 +187,7 @@ export default function BookingForm({ tour }: BookingFormProps) {
           type="button"
           onClick={handleSubmit(onBookNow)}
           disabled={bookLoading}
-          className="w-full bg-[#0077B6] text-white font-semibold py-2.5 rounded-md hover:bg-[#005f8e] transition-colors disabled:opacity-50"
+          className="w-full bg-primary text-white font-semibold py-2.5 rounded-md hover:bg-primary-hover transition-colors disabled:opacity-50"
         >
           {bookLoading ? 'Processing…' : 'Book Now'}
         </button>
@@ -206,7 +206,7 @@ export default function BookingForm({ tour }: BookingFormProps) {
               href={bookUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[#0077B6] underline text-xs mt-1 inline-block"
+              className="text-primary underline text-xs mt-1 inline-block"
             >
               Open WhatsApp link
             </a>

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useCartStore } from '@/store/cart';
 import { WHATSAPP_NUMBER } from '@/lib/config';
 
@@ -14,25 +15,44 @@ const navLinks = [
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const pathname = usePathname();
   const items = useCartStore((s) => s.items);
+
+  const isActive = (href: string) => {
+    if (href === '/#deals') return pathname === '/';
+    return pathname === href || pathname.startsWith(href + '/');
+  };
   const cartCount = items.length;
 
   return (
-    <header className="sticky top-0 z-50 bg-white shadow-sm">
+    <header className="sticky top-0 z-50 bg-white border-b border-gray-100 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-22">
+        <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2">
-            <img src="/logo.png" alt="Guanacaste Tickets" className="h-12 w-auto md:h-15" style={{ minWidth: '180px' }} />
+          <Link href="/" className="group flex flex-col items-start gap-1 select-none">
+            <span className="font-heading font-extrabold text-3xl leading-none tracking-tight text-primary italic transition-colors group-hover:text-primary-hover">
+              Guanacaste
+            </span>
+            <div className="flex items-center gap-1.5 w-full">
+              <span className="h-px flex-1 bg-primary/30 rounded-full" />
+              <span className="font-heading font-semibold text-[0.6rem] tracking-[0.32em] uppercase text-secondary transition-colors group-hover:text-secondary-hover">
+                Tickets
+              </span>
+              <span className="h-px flex-1 bg-primary/30 rounded-full" />
+            </div>
           </Link>
 
           {/* Desktop nav */}
-          <nav className="hidden md:flex items-center gap-6" aria-label="Main navigation">
+          <nav className="hidden md:flex items-center gap-7" aria-label="Main navigation">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className="text-gray-700 hover:text-primary font-hight transition-colors"
+                className={`font-medium text-base pb-0.5 border-b-2 transition-colors ${
+                  isActive(link.href)
+                    ? 'text-primary border-primary'
+                    : 'text-gray-700 border-transparent hover:text-primary hover:border-primary/40'
+                }`}
               >
                 {link.label}
               </Link>
@@ -113,7 +133,11 @@ export default function Header() {
             <Link
               key={link.href}
               href={link.href}
-              className="text-gray-700 hover:text-primary font-medium py-1 transition-colors"
+              className={`font-medium py-1 pl-3 border-l-2 transition-colors ${
+                isActive(link.href)
+                  ? 'text-primary border-primary'
+                  : 'text-gray-700 border-transparent hover:text-primary'
+              }`}
               onClick={() => setMenuOpen(false)}
             >
               {link.label}

@@ -20,7 +20,7 @@ export default function BookingCart() {
     return (
       <div className="text-center py-12 space-y-3">
         <p className="text-gray-500 text-base">Your cart is empty.</p>
-        <Link href="/tours" className="text-[#0077B6] hover:underline text-sm font-medium">
+        <Link href="/tours" className="text-primary hover:underline text-sm font-medium">
           Browse tours
         </Link>
       </div>
@@ -93,7 +93,7 @@ export default function BookingCart() {
           type="button"
           onClick={handleConfirm}
           disabled={loading}
-          className="w-full bg-[#0077B6] text-white font-semibold py-2.5 rounded-md hover:bg-[#005f8e] transition-colors disabled:opacity-50"
+          className="w-full bg-primary text-white font-semibold py-2.5 rounded-md hover:bg-primary-hover transition-colors disabled:opacity-50"
         >
           {loading ? 'Processing…' : 'Confirm All Bookings'}
         </button>

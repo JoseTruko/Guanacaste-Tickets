@@ -69,7 +69,7 @@ export default function TestimonialsSection() {
   };
 
   return (
-    <section className="py-16 px-4 bg-bg">
+    <section className="py-16 px-4 bg-surface">
       <div className="max-w-7xl mx-auto">
         <Reveal>
           <h2 className="font-heading font-bold text-3xl md:text-4xl text-gray-900 mb-8 text-center">
@@ -106,7 +106,7 @@ export default function TestimonialsSection() {
                 key={i}
                 onClick={() => scrollTo(i)}
                 aria-label={`Go to testimonial ${i + 1}`}
-                className={`w-2 h-2 rounded-full transition-all duration-300 ${i === activeIndex ? 'bg-[#0077B6] w-4' : 'bg-gray-300'}`}
+                className={`w-2 h-2 rounded-full transition-all duration-300 ${i === activeIndex ? 'bg-primary w-4' : 'bg-gray-300'}`}
               />
             ))}
           </div>

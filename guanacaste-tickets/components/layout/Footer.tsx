@@ -3,13 +3,22 @@ import { WHATSAPP_NUMBER } from '@/lib/config';
 
 export default function Footer() {
   return (
-    <footer className="bg-[#2D5A27] text-white">
+    <footer className="bg-secondary text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Brand */}
           <div>
-            <div className="mb-3">
-              <img src="/logo.svg" alt="Guanacaste Tickets" className="h-22 w-auto brightness-0 invert" />
+            <div className="mb-4 flex flex-col items-start gap-1">
+              <span className="font-heading font-extrabold text-2xl leading-none tracking-tight text-white italic">
+                Guanacaste
+              </span>
+              <div className="flex items-center gap-1.5 w-full">
+                <span className="h-px flex-1 bg-white/30 rounded-full" />
+                <span className="font-heading font-semibold text-[0.52rem] tracking-[0.32em] uppercase text-green-300">
+                  Tickets
+                </span>
+                <span className="h-px flex-1 bg-white/30 rounded-full" />
+              </div>
             </div>
             <p className="text-green-200 text-sm leading-relaxed">
               Your trusted source for tours and experiences in Guanacaste, Costa Rica.

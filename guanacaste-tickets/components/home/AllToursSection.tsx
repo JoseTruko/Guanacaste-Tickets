@@ -1,16 +1,26 @@
 'use client';
 
-import { useState, useCallback } from 'react';
-import { getAllTours } from '@/lib/data/tours';
+import { useState, useCallback, useEffect } from 'react';
 import TourCard from '@/components/tours/TourCard';
 import TourFilters from '@/components/tours/TourFilters';
 import BokunWidget from '@/components/tours/BokunWidget';
 import type { Tour } from '@/types/index';
 
-const staticTours = getAllTours();
-
 export default function AllToursSection() {
-  const [filteredTours, setFilteredTours] = useState<Tour[]>(staticTours);
+  const [allTours, setAllTours] = useState<Tour[]>([]);
+  const [filteredTours, setFilteredTours] = useState<Tour[]>([]);
+
+  useEffect(() => {
+    fetch('/api/tours')
+      .then((r) => r.json())
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setAllTours(data);
+          setFilteredTours(data);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const handleFilter = useCallback((tours: Tour[]) => {
     setFilteredTours(tours);
@@ -28,21 +38,19 @@ export default function AllToursSection() {
           <BokunWidget />
         </div>
 
-        {/* Own tours */}
-        <div>
-          <div className="mb-6">
-            <TourFilters tours={staticTours} onFilter={handleFilter} />
-          </div>
-          {filteredTours.length === 0 ? (
-            <p className="text-center text-neutral py-10">No tours found</p>
-          ) : (
+        {/* Own tours — only shown if Supabase has data */}
+        {allTours.length > 0 && (
+          <div>
+            <div className="mb-6">
+              <TourFilters tours={allTours} onFilter={handleFilter} />
+            </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {filteredTours.map((tour) => (
                 <TourCard key={tour.id} tour={tour} />
               ))}
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </section>
   );

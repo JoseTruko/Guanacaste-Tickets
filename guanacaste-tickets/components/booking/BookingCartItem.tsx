@@ -20,7 +20,7 @@ export default function BookingCartItem({ item }: BookingCartItemProps) {
       <div className="flex-1 min-w-0 space-y-0.5">
         <Link
           href={`/tours/${item.tourSlug}`}
-          className="text-sm font-semibold text-[#0077B6] hover:underline truncate block"
+          className="text-sm font-semibold text-primary hover:underline truncate block"
         >
           {item.tourTitle}
         </Link>

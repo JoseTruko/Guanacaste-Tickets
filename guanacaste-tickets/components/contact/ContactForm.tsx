@@ -53,7 +53,7 @@ export default function ContactForm() {
           type="text"
           autoComplete="name"
           {...register('name')}
-          className="w-full border border-gray-300 rounded-md px-4 py-2.5 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0077B6] focus:border-transparent transition"
+          className="w-full border border-gray-300 rounded-md px-4 py-2.5 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition"
           placeholder="Your name"
         />
         {errors.name && (
@@ -70,7 +70,7 @@ export default function ContactForm() {
           type="email"
           autoComplete="email"
           {...register('email')}
-          className="w-full border border-gray-300 rounded-md px-4 py-2.5 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0077B6] focus:border-transparent transition"
+          className="w-full border border-gray-300 rounded-md px-4 py-2.5 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition"
           placeholder="you@example.com"
         />
         {errors.email && (
@@ -86,7 +86,7 @@ export default function ContactForm() {
           id="message"
           rows={5}
           {...register('message')}
-          className="w-full border border-gray-300 rounded-md px-4 py-2.5 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0077B6] focus:border-transparent transition resize-none"
+          className="w-full border border-gray-300 rounded-md px-4 py-2.5 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition resize-none"
           placeholder="How can we help you?"
         />
         {errors.message && (
@@ -97,7 +97,7 @@ export default function ContactForm() {
       <button
         type="submit"
         disabled={sending}
-        className="inline-flex items-center justify-center bg-[#0077B6] text-white font-semibold px-6 py-3 rounded-md hover:bg-[#005f8e] transition-colors duration-150 disabled:opacity-60 disabled:pointer-events-none"
+        className="inline-flex items-center justify-center bg-primary text-white font-semibold px-6 py-3 rounded-md hover:bg-primary-hover transition-colors duration-150 disabled:opacity-60 disabled:pointer-events-none"
       >
         {sending ? 'Sending…' : 'Send Message'}
       </button>
