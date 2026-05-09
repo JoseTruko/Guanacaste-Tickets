@@ -90,7 +90,7 @@ export default async function TourPage({ params }: PageProps) {
               <div className="flex flex-wrap gap-4 text-sm text-gray-600">
                 <span>⏱ {tour.duration}h</span>
                 <span>🌐 {tour.languages.join(', ')}</span>
-                <span>👥 Max {tour.maxGroupSize} people</span>
+                <span>👥 Min {tour.minGroupSize} people</span>
               </div>
             </div>
 

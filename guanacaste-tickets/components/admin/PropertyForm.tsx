@@ -18,7 +18,7 @@ const empty: Property = {
   builtArea: undefined, landArea: undefined,
   bedrooms: undefined, bathrooms: undefined, parking: undefined, yearBuilt: undefined,
   amenities: [], image: '', images: [], videoUrl: '', floorPlanUrl: '',
-  contactUrl: '',
+  contactUrl: '', externalUrl: '',
 };
 
 export default function PropertyForm({ initial, onSave, password }: Props) {
@@ -129,6 +129,10 @@ export default function PropertyForm({ initial, onSave, password }: Props) {
 
       {/* URLs */}
       <div className="space-y-3">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">External Link <span className="text-gray-400 font-normal">(enlace al sitio de bienes raíces)</span></label>
+          <input type="url" value={p.externalUrl ?? ''} onChange={(e) => set('externalUrl', e.target.value)} placeholder="https://..." className={inputCls} />
+        </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">WhatsApp Contact URL</label>
           <input type="text" value={p.contactUrl} onChange={(e) => set('contactUrl', e.target.value)} placeholder="https://wa.me/506..." className={inputCls} />

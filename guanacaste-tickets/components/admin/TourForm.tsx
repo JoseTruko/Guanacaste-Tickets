@@ -10,7 +10,7 @@ const empty: Tour = {
   id: '', slug: '', title: '', description: '', shortDescription: '',
   price: 0, childPrice: 0, currency: 'USD', duration: 0,
   category: 'Adventure', difficulty: 'Easy', languages: ['English', 'Spanish'],
-  maxGroupSize: 10, images: [], featured: false,
+  minGroupSize: 10, images: [], featured: false,
   included: [], notIncluded: [], meetingPoint: '', whatToBring: [],
   faqs: [], cancellationPolicy: { description: '', freeCancellation: true, deadlineHours: 24 },
 };
@@ -89,7 +89,7 @@ export default function TourForm({ initial, onSave, password }: Props) {
         {field('Adult Price (USD)', 'price', 'number')}
         {field('Child Price (USD)', 'childPrice', 'number')}
         {field('Duration (hours)', 'duration', 'number')}
-        {field('Max Group Size', 'maxGroupSize', 'number')}
+        {field('Min Group Size', 'minGroupSize', 'number')}
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">

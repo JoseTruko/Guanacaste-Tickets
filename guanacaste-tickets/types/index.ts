@@ -26,7 +26,7 @@ export interface Tour {
   category: TourCategory;
   difficulty: 'Easy' | 'Moderate' | 'Challenging';
   languages: string[];
-  maxGroupSize: number;
+  minGroupSize: number;
   images: string[];
   featured: boolean;
   included: string[];
@@ -68,6 +68,7 @@ export interface Property {
   videoUrl?: string;
   floorPlanUrl?: string;
   contactUrl: string;
+  externalUrl?: string;
 }
 
 export interface BookingItem {

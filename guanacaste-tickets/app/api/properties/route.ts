@@ -56,5 +56,6 @@ export function propertyToDb(p: Property) {
     video_url: p.videoUrl,
     floor_plan_url: p.floorPlanUrl,
     contact_url: p.contactUrl,
+    external_url: p.externalUrl,
   };
 }

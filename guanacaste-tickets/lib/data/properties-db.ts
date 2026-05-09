@@ -26,6 +26,7 @@ function dbToProperty(p: any): Property {
     videoUrl: p.video_url,
     floorPlanUrl: p.floor_plan_url,
     contactUrl: p.contact_url,
+    externalUrl: p.external_url,
   };
 }
 

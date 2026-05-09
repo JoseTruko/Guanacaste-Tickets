@@ -28,7 +28,7 @@ export async function PUT(req: Request, { params }: Params) {
       category: body.category,
       difficulty: body.difficulty,
       languages: body.languages,
-      max_group_size: body.maxGroupSize,
+      min_group_size: body.minGroupSize,
       images: body.images,
       featured: body.featured,
       included: body.included,
