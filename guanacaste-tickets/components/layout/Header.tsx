@@ -7,8 +7,8 @@ import { useCartStore } from '@/store/cart';
 import { WHATSAPP_NUMBER } from '@/lib/config';
 
 const navLinks = [
+  { label: 'Home', href: '/' },
   { label: 'Tours', href: '/tours' },
-  { label: 'Deals', href: '/#deals' },
   { label: 'Real Estate', href: '/real-estate' },
   { label: 'Contact', href: '/contact' },
 ];
@@ -19,7 +19,7 @@ export default function Header() {
   const items = useCartStore((s) => s.items);
 
   const isActive = (href: string) => {
-    if (href === '/#deals') return pathname === '/';
+    if (href === '/') return pathname === '/';
     return pathname === href || pathname.startsWith(href + '/');
   };
   const cartCount = items.length;
