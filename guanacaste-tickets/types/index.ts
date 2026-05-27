@@ -87,12 +87,13 @@ export interface BookingSummary {
   items: BookingItem[];
   grandTotal: number;
   currency: 'USD';
+  customerName: string;
+  customerEmail: string;
 }
 
 export interface BookingResult {
   success: boolean;
   message: string;
-  whatsappUrl?: string;
 }
 
 export interface PaymentAdapter {

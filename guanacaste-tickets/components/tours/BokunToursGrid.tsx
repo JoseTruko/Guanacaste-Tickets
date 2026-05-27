@@ -177,7 +177,7 @@ export default function BokunToursGrid({ searchQuery = '' }: Props) {
               </div>
 
               {/* Book Now */}
-              <span className="mt-1 self-end bg-primary text-white text-xs font-semibold px-3 py-1.5 rounded-lg group-hover:bg-primary-hover transition-colors whitespace-nowrap">
+              <span className="mt-1 self-end bg-primary text-white text-xs font-semibold px-3 py-1.5 border border-primary rounded-sm group-hover:bg-primary-hover transition-colors whitespace-nowrap">
                 Book Now
               </span>
             </div>

@@ -16,6 +16,7 @@ type FormValues = z.infer<typeof schema>;
 export default function ContactForm() {
   const [submitted, setSubmitted] = useState(false);
   const [sending, setSending] = useState(false);
+  const [error, setError] = useState('');
 
   const {
     register,
@@ -23,12 +24,22 @@ export default function ContactForm() {
     formState: { errors },
   } = useForm<FormValues>({ resolver: zodResolver(schema) });
 
-  const onSubmit = (_data: FormValues) => {
+  const onSubmit = async (data: FormValues) => {
     setSending(true);
-    setTimeout(() => {
-      setSending(false);
+    setError('');
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error('Failed to send');
       setSubmitted(true);
-    }, 1000);
+    } catch {
+      setError('Something went wrong. Please try again or contact us via WhatsApp.');
+    } finally {
+      setSending(false);
+    }
   };
 
   if (submitted) {
@@ -93,6 +104,10 @@ export default function ContactForm() {
           <p className="mt-1 text-sm text-red-600">{errors.message.message}</p>
         )}
       </div>
+
+      {error && (
+        <p className="text-sm text-red-600">{error}</p>
+      )}
 
       <button
         type="submit"

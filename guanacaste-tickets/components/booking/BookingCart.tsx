@@ -6,6 +6,8 @@ import { useCartStore } from '@/store/cart';
 import { paymentGateway } from '@/lib/payment';
 import BookingCartItem from './BookingCartItem';
 
+type CustomerInfo = { name: string; email: string };
+
 export default function BookingCart() {
   const items = useCartStore((s) => s.items);
   const grandTotal = useCartStore((s) => s.grandTotal);
@@ -13,8 +15,9 @@ export default function BookingCart() {
 
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
-  const [fallbackUrl, setFallbackUrl] = useState('');
   const [isError, setIsError] = useState(false);
+  const [customer, setCustomer] = useState<CustomerInfo>({ name: '', email: '' });
+  const [customerErrors, setCustomerErrors] = useState<Partial<CustomerInfo>>({});
 
   if (items.length === 0) {
     return (
@@ -28,30 +31,31 @@ export default function BookingCart() {
   }
 
   const handleConfirm = async () => {
+    const errors: Partial<CustomerInfo> = {};
+    if (!customer.name.trim()) errors.name = 'Name is required';
+    if (!customer.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customer.email)) {
+      errors.email = 'Valid email is required';
+    }
+    if (Object.keys(errors).length) {
+      setCustomerErrors(errors);
+      return;
+    }
+    setCustomerErrors({});
     setLoading(true);
     setMessage('');
-    setFallbackUrl('');
     setIsError(false);
 
     const result = await paymentGateway.processBooking({
       items,
       grandTotal: grandTotal(),
       currency: 'USD',
+      customerName: customer.name,
+      customerEmail: customer.email,
     });
 
     setLoading(false);
-
-    if (result.success && result.whatsappUrl) {
-      const opened = window.open(result.whatsappUrl, '_blank');
-      if (!opened) {
-        setFallbackUrl(result.whatsappUrl);
-      }
-      setMessage("Booking request sent! We'll confirm via WhatsApp shortly.");
-      setIsError(false);
-    } else {
-      setMessage(result.message || 'Something went wrong. Please try again.');
-      setIsError(true);
-    }
+    setMessage(result.message || 'Something went wrong. Please try again.');
+    setIsError(!result.success);
   };
 
   return (
@@ -68,22 +72,39 @@ export default function BookingCart() {
         <span>${grandTotal().toFixed(2)} USD</span>
       </div>
 
+      {/* Customer info */}
+      <div className="border-t border-gray-100 pt-4 space-y-3">
+        <p className="text-sm font-medium text-gray-700">Your details</p>
+        <div>
+          <input
+            type="text"
+            placeholder="Full name"
+            value={customer.name}
+            onChange={(e) => setCustomer((c) => ({ ...c, name: e.target.value }))}
+            className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+          />
+          {customerErrors.name && (
+            <p className="mt-1 text-xs text-red-600">{customerErrors.name}</p>
+          )}
+        </div>
+        <div>
+          <input
+            type="email"
+            placeholder="Email address"
+            value={customer.email}
+            onChange={(e) => setCustomer((c) => ({ ...c, email: e.target.value }))}
+            className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+          />
+          {customerErrors.email && (
+            <p className="mt-1 text-xs text-red-600">{customerErrors.email}</p>
+          )}
+        </div>
+      </div>
+
       {/* Feedback */}
       {message && (
         <div className={`text-sm rounded-md px-3 py-2 ${isError ? 'bg-red-50 text-red-700' : 'bg-green-50 text-green-700'}`}>
           {message}
-          {fallbackUrl && (
-            <div className="mt-1">
-              <a
-                href={fallbackUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline font-medium"
-              >
-                Open WhatsApp link
-              </a>
-            </div>
-          )}
         </div>
       )}
 

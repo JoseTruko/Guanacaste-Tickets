@@ -26,7 +26,8 @@ export class WhatsAppAdapter implements PaymentAdapter {
       const message = lines.join('\n');
       const url = `https://wa.me/${this.phoneNumber}?text=${encodeURIComponent(message)}`;
 
-      return { success: true, message: 'Booking request sent via WhatsApp', whatsappUrl: url };
+      window.open(url, '_blank');
+      return { success: true, message: 'Booking request sent via WhatsApp' };
     } catch (err) {
       const error = err as Error;
       return { success: false, message: error.message };

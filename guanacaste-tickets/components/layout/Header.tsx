@@ -55,7 +55,7 @@ export default function Header() {
           <div className="hidden md:flex items-center gap-3">
             <Link
               href="/tours"
-              className="bg-primary text-white px-5 py-2 rounded-md font-semibold text-sm hover:bg-primary-hover transition-colors"
+              className="inline-flex items-center justify-center bg-primary text-white px-5 py-2 border border-primary rounded-sm font-semibold text-sm hover:bg-primary-hover transition-colors"
             >
               Book
             </Link>
@@ -65,7 +65,7 @@ export default function Header() {
           <div className="flex md:hidden items-center gap-2">
             <Link
               href="/tours"
-              className="bg-primary text-white px-4 py-2 rounded-md font-semibold text-sm hover:bg-primary-hover transition-colors"
+              className="inline-flex items-center justify-center bg-primary text-white px-4 py-2 border border-primary rounded-sm font-semibold text-sm hover:bg-primary-hover transition-colors"
             >
               Book
             </Link>

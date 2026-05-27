@@ -68,10 +68,6 @@ export default function ContactPage() {
               <p className="text-gray-500 text-sm">Monday – Sunday: 7:00 am – 8:00 pm (CST)</p>
             </div>
 
-            <div className="border-t border-gray-100 pt-6">
-              <h3 className="font-semibold text-gray-900 mb-2">Based in</h3>
-              <p className="text-gray-500 text-sm">Guanacaste, Costa Rica 🇨🇷</p>
-            </div>
           </div>
         </div>
       </div>

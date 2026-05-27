@@ -9,8 +9,8 @@ type Tab = 'all' | 'own' | 'partner';
 
 const tabs: { key: Tab; label: string }[] = [
   { key: 'all', label: 'All Tours' },
-  { key: 'partner', label: 'Partner Tours' },
-  { key: 'own', label: 'Our Tours' },
+  { key: 'partner', label: 'Regular Tours' },
+  { key: 'own', label: 'Signature Tours' },
 ];
 
 export default function AllToursSection() {

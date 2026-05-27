@@ -1,8 +1,7 @@
-import { WHATSAPP_NUMBER } from '@/lib/config';
-import { WhatsAppAdapter } from './whatsapp-adapter';
+import { EmailAdapter } from './email-adapter';
 import type { PaymentAdapter } from './types';
 
-export { WhatsAppAdapter } from './whatsapp-adapter';
+export { EmailAdapter } from './email-adapter';
 export type { PaymentAdapter, BookingSummary, BookingResult, BookingItem } from './types';
 
-export const paymentGateway: PaymentAdapter = new WhatsAppAdapter(WHATSAPP_NUMBER);
+export const paymentGateway: PaymentAdapter = new EmailAdapter();

@@ -6,7 +6,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import type { Tour } from '@/types/index';
 import { calculateTotalPrice } from '@/lib/booking/pricing';
-import { useCartStore } from '@/store/cart';
 import { paymentGateway } from '@/lib/payment';
 import ParticipantSelector from './ParticipantSelector';
 
@@ -30,11 +29,9 @@ type BookingFormProps = {
 };
 
 export default function BookingForm({ tour }: BookingFormProps) {
-  const addItem = useCartStore((s) => s.addItem);
-  const [cartMsg, setCartMsg] = useState('');
   const [bookLoading, setBookLoading] = useState(false);
-  const [bookMsg, setBookMsg] = useState('');
-  const [bookUrl, setBookUrl] = useState('');
+  const [booked, setBooked] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
   const {
     register,
@@ -51,41 +48,32 @@ export default function BookingForm({ tour }: BookingFormProps) {
   const children = watch('children');
   const total = calculateTotalPrice(adults, children, tour.price, tour.childPrice);
 
-  const buildItem = (values: FormValues) => ({
-    tourId: tour.id,
-    tourTitle: tour.title,
-    tourSlug: tour.slug,
-    date: values.date,
-    adults: values.adults,
-    children: values.children,
-    adultPrice: tour.price,
-    childPrice: tour.childPrice,
-    subtotal: calculateTotalPrice(values.adults, values.children, tour.price, tour.childPrice),
-  });
-
-  const onAddToCart = (values: FormValues) => {
-    addItem(buildItem(values));
-    setCartMsg('Added to cart!');
-    setTimeout(() => setCartMsg(''), 3000);
-  };
-
   const onBookNow = async (values: FormValues) => {
     setBookLoading(true);
-    setBookMsg('');
-    setBookUrl('');
-    const item = buildItem(values);
+    setErrorMsg('');
+    const subtotal = calculateTotalPrice(values.adults, values.children, tour.price, tour.childPrice);
     const result = await paymentGateway.processBooking({
-      items: [item],
-      grandTotal: item.subtotal,
+      items: [{
+        tourId: tour.id,
+        tourTitle: tour.title,
+        tourSlug: tour.slug,
+        date: values.date,
+        adults: values.adults,
+        children: values.children,
+        adultPrice: tour.price,
+        childPrice: tour.childPrice,
+        subtotal,
+      }],
+      grandTotal: subtotal,
       currency: 'USD',
+      customerName: values.name,
+      customerEmail: values.email,
     });
     setBookLoading(false);
-    if (result.success && result.whatsappUrl) {
-      window.open(result.whatsappUrl, '_blank');
-      setBookMsg('Booking request sent! We\'ll confirm via WhatsApp shortly.');
-      setBookUrl(result.whatsappUrl);
+    if (result.success) {
+      setBooked(true);
     } else {
-      setBookMsg(result.message || 'Something went wrong. Please try again.');
+      setErrorMsg(result.message || 'Something went wrong. Please try again.');
     }
   };
 
@@ -174,44 +162,25 @@ export default function BookingForm({ tour }: BookingFormProps) {
         </div>
       </div>
 
-      {/* Actions */}
-      <div className="flex flex-col gap-2">
-        <button
-          type="button"
-          onClick={handleSubmit(onAddToCart)}
-          className="w-full bg-secondary text-white font-semibold py-2.5 rounded-md hover:bg-secondary-hover transition-colors"
-        >
-          Add to Cart
-        </button>
-        <button
-          type="button"
-          onClick={handleSubmit(onBookNow)}
-          disabled={bookLoading}
-          className="w-full bg-primary text-white font-semibold py-2.5 rounded-md hover:bg-primary-hover transition-colors disabled:opacity-50"
-        >
-          {bookLoading ? 'Processing…' : 'Book Now'}
-        </button>
-      </div>
-
-      {cartMsg && (
-        <p className="text-sm text-green-700 font-medium text-center">{cartMsg}</p>
-      )}
-      {bookMsg && (
-        <div className="text-sm text-center">
-          <p className={bookMsg.includes('sent') ? 'text-green-700 font-medium' : 'text-red-600'}>
-            {bookMsg}
-          </p>
-          {bookUrl && (
-            <a
-              href={bookUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-primary underline text-xs mt-1 inline-block"
-            >
-              Open WhatsApp link
-            </a>
-          )}
+      {booked ? (
+        <div className="rounded-md bg-green-50 border border-green-200 px-4 py-4 text-center">
+          <p className="text-green-800 font-semibold text-sm">Booking request sent!</p>
+          <p className="text-green-700 text-xs mt-1">Check your email. We'll confirm availability shortly.</p>
         </div>
+      ) : (
+        <>
+          <button
+            type="button"
+            onClick={handleSubmit(onBookNow)}
+            disabled={bookLoading}
+            className="w-full bg-primary text-white font-semibold py-2.5 rounded-md hover:bg-primary-hover transition-colors disabled:opacity-50"
+          >
+            {bookLoading ? 'Processing…' : 'Book Now'}
+          </button>
+          {errorMsg && (
+            <p className="text-sm text-center font-medium text-red-600">{errorMsg}</p>
+          )}
+        </>
       )}
     </form>
   );
