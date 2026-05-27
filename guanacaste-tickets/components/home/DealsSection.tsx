@@ -1,6 +1,6 @@
 import Reveal from '@/components/ui/Reveal';
 import Link from 'next/link';
-import BokunWidget from '@/components/tours/BokunWidget';
+import BokunToursGrid from '@/components/tours/BokunToursGrid';
 
 export default function DealsSection() {
   return (
@@ -8,14 +8,14 @@ export default function DealsSection() {
       <div className="max-w-7xl mx-auto">
         <Reveal>
           <h2 className="font-heading font-bold text-3xl md:text-4xl text-gray-900 mb-2 text-center">
-            Tours in Guanacaste
+            Deals & Experiences
           </h2>
           <p className="text-center text-neutral mb-10">
-            Curated by our local team — book directly, no middlemen.
+            Featured tours in Guanacaste and Rincon de la Vieja.
           </p>
         </Reveal>
 
-        <BokunWidget />
+        <BokunToursGrid />
 
         <Reveal>
           <div className="mt-10 text-center">

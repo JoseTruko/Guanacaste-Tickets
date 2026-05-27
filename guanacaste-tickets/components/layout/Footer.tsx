@@ -8,17 +8,12 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Brand */}
           <div>
-            <div className="mb-4 flex flex-col items-start gap-1">
-              <span className="font-heading font-extrabold text-2xl leading-none tracking-tight text-white italic">
-                Guanacaste
-              </span>
-              <div className="flex items-center gap-1.5 w-full">
-                <span className="h-px flex-1 bg-white/30 rounded-full" />
-                <span className="font-heading font-semibold text-[0.52rem] tracking-[0.32em] uppercase text-green-300">
-                  Tickets
-                </span>
-                <span className="h-px flex-1 bg-white/30 rounded-full" />
-              </div>
+            <div className="mb-4">
+              <img
+                src="/logo-footer.svg"
+                alt="Guanacaste Tickets"
+                className="h-20 w-auto md:h-24"
+              />
             </div>
             <p className="text-green-200 text-sm leading-relaxed">
               Your trusted source for tours and experiences in Guanacaste, Costa Rica.
