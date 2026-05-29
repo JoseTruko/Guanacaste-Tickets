@@ -40,22 +40,22 @@ export default function AllToursSection() {
   const visibleTabs = allTours.length > 0 ? tabs : tabs.filter((t) => t.key !== 'own');
 
   return (
-    <section className="py-16 px-4 bg-white">
+    <section className="py-8 md:py-16 px-4 bg-white">
       <div className="max-w-7xl mx-auto">
 
         {/* Header */}
-        <h1 className="font-heading font-bold text-3xl md:text-4xl text-gray-900 mb-3 text-center">
+        <h1 className="font-heading font-bold text-2xl md:text-4xl text-gray-900 mb-1.5 md:mb-3 text-center">
           Tours in Guanacaste &amp; Rincón de la Vieja
         </h1>
-        <p className="text-center text-gray-500 mb-8">
+        <p className="text-center text-gray-500 text-sm md:text-base mb-4 md:mb-8">
           Curated experiences across Guanacaste and the Rincón de la Vieja region.
         </p>
 
         {/* Search bar */}
-        <div className="max-w-xl mx-auto mb-6">
+        <div className="max-w-xl mx-auto mb-3 md:mb-6">
           <div className="relative">
             <svg
-              className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none"
+              className="absolute left-3 md:left-4 top-1/2 -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-gray-400 pointer-events-none"
               fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
             >
               <circle cx="11" cy="11" r="8" />
@@ -63,10 +63,10 @@ export default function AllToursSection() {
             </svg>
             <input
               type="text"
-              placeholder="Search tours by name or description…"
+              placeholder="Search tours…"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-11 pr-4 py-3.5 rounded-2xl border-2 border-gray-200 bg-white text-sm text-gray-800 placeholder-gray-400 shadow-sm focus:outline-none focus:border-primary focus:shadow-md transition-all duration-200"
+              className="w-full pl-9 md:pl-11 pr-4 py-2.5 md:py-3.5 rounded-2xl border-2 border-gray-200 bg-white text-sm text-gray-800 placeholder-gray-400 shadow-sm focus:outline-none focus:border-primary focus:shadow-md transition-all duration-200"
             />
             {searchQuery && (
               <button
@@ -83,12 +83,12 @@ export default function AllToursSection() {
         </div>
 
         {/* Tab pills */}
-        <div className="flex gap-2 justify-center mb-10">
+        <div className="flex gap-1.5 md:gap-2 justify-center mb-6 md:mb-10">
           {visibleTabs.map(({ key, label }) => (
             <button
               key={key}
               onClick={() => setActiveTab(key)}
-              className={`px-5 py-2 rounded-full text-sm font-semibold border transition-colors duration-150 ${
+              className={`px-4 md:px-5 py-1.5 md:py-2 rounded-full text-xs md:text-sm font-semibold border transition-colors duration-150 ${
                 activeTab === key
                   ? 'bg-primary text-white border-primary shadow-sm'
                   : 'bg-white text-gray-600 border-gray-300 hover:border-primary hover:text-primary'
