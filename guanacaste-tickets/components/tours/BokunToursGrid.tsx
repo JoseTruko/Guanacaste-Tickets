@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 
 const CHANNEL_UUID = 'e75ced95-7cfd-4bdf-acfe-c97be1faa9bf';
+const BOKUN_SRC = `https://widgets.bokun.io/assets/javascripts/apps/build/BokunWidgetsLoader.js?bookingChannelUUID=${CHANNEL_UUID}`;
 
 type BokunTour = {
   id: number;
@@ -82,6 +83,116 @@ const TOURS: BokunTour[] = [
     location: 'Parque Nac. Tenorio',
     image: 'images/tenoriotour.webp',
   },
+  {
+    id: 614423,
+    title: 'Rincón de La Vieja National Park & Hot Springs',
+    description: 'This National Park is considered one of the best places in the country for hiking, due to the quality of its trails and its great weather.',
+    category: 'Adventure',
+    duration: '5h',
+    difficulty: 'Moderate',
+    location: 'Rincón de la Vieja',
+    image: 'images/rinconhotspringtour.webp.webp',
+  },
+  {
+    id: 831915,
+    title: 'Buena Vista Combo: Day Pass Including Lunch',
+    description: 'Start by gliding through the forest on a thrilling canopy tour, followed by a thrilling descent on a 1,200-foot (400-meter) water slide. Learn about the local cultural richness by exploring a traditional pottery shop and tasting the region.',
+    category: 'Adventure',
+    duration: '10h',
+    difficulty: 'Challenging',
+    location: 'Guanacaste',
+    image: 'images/buenavistatour.webp.webp',
+  },
+  {
+    id: 164739,
+    title: 'Guachipelín Adventure Combo Incl. Lunch & Hot Springs',
+    description: '6 adventures, nature and volcanic landscapes at the same experience. One of the best outdoor adventures in Guanacaste',
+    category: 'Adventure',
+    duration: '12h',
+    difficulty: 'Moderate',
+    location: 'Guachipelín, Guanacaste',
+    image: 'images/guachipilintour.webp.webp',
+  },
+  {
+    id: 613673,
+    title: 'Safari Float on Corobicí & Llanos de Cortéz Waterfalls',
+    description: 'Enjoy a tranquil floating safari on the Corobicí River, spotting wildlife with a naturalist guide, followed by time to relax and swim at the beautiful Llanos de Cortés Waterfall.',
+    category: 'Wildlife',
+    duration: '4h',
+    difficulty: 'Easy',
+    location: 'Río Corobicí',
+    image: 'images/safaritour.webp.webp',
+  },
+  {
+    id: 614228,
+    title: 'ATV Mountain and Beach',
+    description: 'Enjoy amazing ocean views and mountain landscapes riding on this 4 wheels experience.',
+    category: 'Adventure',
+    duration: '3h',
+    difficulty: 'Easy',
+    location: 'Guanacaste',
+    image: 'images/atvmountaintour.webp.webp',
+  },
+  {
+    id: 164724,
+    title: 'Santa Rosa National Park & Liberia City Tour',
+    description: 'An experience full of Costa Rican history, nature and culture.',
+    category: 'Cultural',
+    duration: '5h',
+    difficulty: 'Moderate',
+    location: 'Santa Rosa, Guanacaste',
+    image: 'images/santarosatour.webp.webp',
+  },
+  
+  // {
+  //   id: 164763,
+  //   title: 'FALTA - Arenal Místico One Day Tour from Guanacaste',
+  //   description: 'Visit the iconic Arenal Volcano region: explore the jungle, enjoy hot springs, and take in breathtaking views of the volcano.',
+  //   category: 'Nature',
+  //   duration: '10h',
+  //   difficulty: 'Easy',
+  //   location: 'Arenal, Alajuela',
+  // },
+  {
+    id: 164761,
+    title: 'Arenal Volcano One Day + Hot Springs from Guanacaste',
+    description: 'Round trip to Arenal Volcano area, blend magic hot springs with lush hanging bridges or a rich landscape volcano hike',
+    category: 'Adventure',
+    duration: '12h',
+    difficulty: 'Moderate',
+    location: 'Arenal, Alajuela',
+    image: 'images/arenalonedaytour.webp.webp',
+  },
+  {
+    id: 164720,
+    title: 'Early Bird Watching Tour',
+    description: 'Champions get up early ! This bird watching tour is a very popular activity for those that like getting up early in morning to try and spot the famous tropical birds in the peaceful, beautiful and scenic tropical dry forest of the area.',
+    category: 'Wildlife',
+    duration: '3h',
+    difficulty: 'Easy',
+    location: 'Guanacaste',
+    image: 'images/earlybirdtour.webp.webp',
+  },
+  {
+    id: 164785,
+    title: 'Río Celeste & Tenorio Volcano Hike',
+    description: 'Rio Celeste Rainforest Hike is one of the most beautiful and scenic rivers in Costa Rica, located in the lush rainforests of Tenorio Volcano National Park',
+    category: 'Nature',
+    duration: '9h',
+    difficulty: 'Moderate',
+    location: 'Tenorio, Alajuela',
+    image: 'images/rioytenoriotour.webp.webp',
+  },
+  {
+    id: 359436,
+    title: 'Rincón Waterfalls Experience',
+    description: 'These aquatic gems, located in the heart of Rincón de la Vieja, offer a postcard-worthy view, transporting you to a world of pure serenity.',
+    category: 'Nature',
+    duration: '6h',
+    difficulty: 'Challenging',
+    location: 'Rincón de la Vieja',
+    image: 'images/watterfallstour.webp.webp',
+  },
 ];
 
 type Props = {
@@ -111,9 +222,20 @@ export default function BokunToursGrid({ searchQuery = '' }: Props) {
     };
   }, [activeTourId]);
 
+  useEffect(() => {
+    if (activeTourId === null) return;
+    const existing = document.querySelector(`script[src="${BOKUN_SRC}"]`);
+    if (existing) existing.remove();
+    const script = document.createElement('script');
+    script.src = BOKUN_SRC;
+    script.async = true;
+    document.body.appendChild(script);
+    return () => { script.remove(); };
+  }, [activeTourId]);
+
   return (
     <>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-fr">
         {visibleTours.length === 0 && (
           <p className="col-span-full text-center text-gray-400 py-10">No tours match your search.</p>
         )}
@@ -121,7 +243,7 @@ export default function BokunToursGrid({ searchQuery = '' }: Props) {
           <button
             key={tour.id}
             onClick={() => setActiveTourId(tour.id)}
-            className="group text-left bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer"
+            className="group text-left bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col"
           >
             {/* Image */}
             <div className="relative aspect-[4/3] overflow-hidden">
@@ -142,7 +264,7 @@ export default function BokunToursGrid({ searchQuery = '' }: Props) {
             </div>
 
             {/* Card body */}
-            <div className="px-4 py-4 flex flex-col gap-2">
+            <div className="px-4 py-4 flex flex-col gap-2 flex-1">
               <h3 className="font-heading font-bold text-gray-900 text-xl leading-snug line-clamp-2 group-hover:text-primary transition-colors">
                 {tour.title}
               </h3>
@@ -213,13 +335,12 @@ export default function BokunToursGrid({ searchQuery = '' }: Props) {
               </svg>
             </button>
 
-            <iframe
-              key={activeTourId}
-              src={`https://widgets.bokun.io/online-sales/${CHANNEL_UUID}/experience/${activeTourId}`}
-              className="w-full rounded-xl"
-              style={{ border: 'none', minHeight: '85vh' }}
-              title="Booking"
-            />
+            <div className="bokun-wrapper p-4" style={{ minHeight: '85vh' }}>
+              <div
+                className="bokunWidget"
+                data-src={`https://widgets.bokun.io/online-sales/${CHANNEL_UUID}/experience/${activeTourId}?lang=en`}
+              />
+            </div>
           </div>
         </div>
       )}
