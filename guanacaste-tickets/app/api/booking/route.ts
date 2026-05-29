@@ -72,39 +72,49 @@ function buildCustomerHtml(summary: BookingSummary): string {
 }
 
 export async function POST(request: Request) {
-  const summary: BookingSummary = await request.json();
+  try {
+    const summary: BookingSummary = await request.json();
 
-  if (!summary.customerName || !summary.customerEmail || !summary.items?.length) {
-    return NextResponse.json({ error: 'Missing booking data' }, { status: 400 });
+    if (!summary.customerName || !summary.customerEmail || !summary.items?.length) {
+      return NextResponse.json({ error: 'Missing booking data' }, { status: 400 });
+    }
+
+    if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+      console.error('Missing SMTP_USER or SMTP_PASS environment variables');
+      return NextResponse.json({ error: 'Email service not configured' }, { status: 500 });
+    }
+
+    const transporter = nodemailer.createTransport({
+      host: 'smtp.hostinger.com',
+      port: 465,
+      secure: true,
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      },
+    });
+
+    const tourNames = summary.items.map((i) => i.tourTitle).join(', ');
+
+    await Promise.all([
+      transporter.sendMail({
+        from: `"Guanacaste Tickets" <${process.env.SMTP_USER}>`,
+        to: process.env.SMTP_USER,
+        replyTo: summary.customerEmail,
+        subject: `Nueva reserva: ${tourNames}`,
+        html: buildAdminHtml(summary),
+      }),
+      transporter.sendMail({
+        from: `"Guanacaste Tickets" <${process.env.SMTP_USER}>`,
+        to: summary.customerEmail,
+        subject: 'Your booking request — Guanacaste Tickets',
+        html: buildCustomerHtml(summary),
+      }),
+    ]);
+
+    return NextResponse.json({ ok: true });
+  } catch (err) {
+    console.error('Booking email error:', err);
+    return NextResponse.json({ error: 'Failed to send booking email' }, { status: 500 });
   }
-
-  const transporter = nodemailer.createTransport({
-    host: 'smtp.hostinger.com',
-    port: 465,
-    secure: true,
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
-    },
-  });
-
-  const tourNames = summary.items.map((i) => i.tourTitle).join(', ');
-
-  await Promise.all([
-    transporter.sendMail({
-      from: `"Guanacaste Tickets" <${process.env.SMTP_USER}>`,
-      to: process.env.SMTP_USER,
-      replyTo: summary.customerEmail,
-      subject: `Nueva reserva: ${tourNames}`,
-      html: buildAdminHtml(summary),
-    }),
-    transporter.sendMail({
-      from: `"Guanacaste Tickets" <${process.env.SMTP_USER}>`,
-      to: summary.customerEmail,
-      subject: 'Your booking request — Guanacaste Tickets',
-      html: buildCustomerHtml(summary),
-    }),
-  ]);
-
-  return NextResponse.json({ ok: true });
 }
