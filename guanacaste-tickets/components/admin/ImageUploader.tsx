@@ -32,7 +32,7 @@ export default function ImageUploader({ images, onChange, password }: Props) {
       <div className="flex flex-wrap gap-2">
         {images.map((url) => (
           <div key={url} className="relative w-24 h-24 rounded-md overflow-hidden border border-gray-200">
-            <Image src={url} alt="" fill className="object-cover" />
+            <Image src={url} alt="" fill sizes="96px" className="object-cover" />
             <button
               type="button"
               onClick={() => remove(url)}

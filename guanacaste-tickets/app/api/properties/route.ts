@@ -33,8 +33,8 @@ function isAdmin(req: Request) {
 }
 
 export function propertyToDb(p: Property) {
-  return {
-    id: p.id,
+  const payload: Record<string, unknown> = {
+    id: p.id || `prop-${Date.now()}`,
     slug: p.slug,
     title: p.title,
     short_description: p.shortDescription,
@@ -58,4 +58,6 @@ export function propertyToDb(p: Property) {
     contact_url: p.contactUrl,
     external_url: p.externalUrl,
   };
+  if (p.id) payload.id = p.id;
+  return payload;
 }

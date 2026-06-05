@@ -35,7 +35,7 @@ export default function AdminAuth({ children }: { children: (password: string) =
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const res = await fetch('/api/tours', { method: 'POST', headers: { 'x-admin-password': input, 'Content-Type': 'application/json' }, body: JSON.stringify({}) });
+    const res = await fetch('/api/admin/verify', { method: 'POST', headers: { 'x-admin-password': input } });
     if (res.status === 401) { setError('Wrong password'); return; }
     login(input);
   };

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { Property } from '@/types/index';
 import ImageUploader from './ImageUploader';
 
@@ -24,6 +24,10 @@ const empty: Property = {
 export default function PropertyForm({ initial, onSave, password }: Props) {
   const [p, setP] = useState<Property>(initial ?? empty);
   const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    setP(initial ?? empty);
+  }, [initial]);
 
   const set = (field: keyof Property, value: unknown) => setP((prev) => ({ ...prev, [field]: value }));
 

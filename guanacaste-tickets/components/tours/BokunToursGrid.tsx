@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
-const CHANNEL_UUID = 'e75ced95-7cfd-4bdf-acfe-c97be1faa9bf';
+const CHANNEL_UUID = '3b187e28-3474-44e2-99b1-b906a1fa827e';
 const BOKUN_SRC = `https://widgets.bokun.io/assets/javascripts/apps/build/BokunWidgetsLoader.js?bookingChannelUUID=${CHANNEL_UUID}`;
 
 type BokunTour = {
@@ -201,6 +201,7 @@ type Props = {
 
 export default function BokunToursGrid({ searchQuery = '' }: Props) {
   const [activeTourId, setActiveTourId] = useState<number | null>(null);
+  const widgetRef = useRef<HTMLDivElement | null>(null);
 
   const visibleTours = searchQuery.trim()
     ? TOURS.filter((t) =>
@@ -222,15 +223,40 @@ export default function BokunToursGrid({ searchQuery = '' }: Props) {
     };
   }, [activeTourId]);
 
+  function removeExistingBokunScripts() {
+    document
+      .querySelectorAll<HTMLScriptElement>('script[src*="BokunWidgetsLoader.js?bookingChannelUUID="]')
+      .forEach((script) => script.remove());
+  }
+
+  function clearPreviousBokunWidget() {
+    const widgets = document.querySelectorAll<HTMLElement>('.bokunWidget');
+    widgets.forEach((widget) => {
+      if (widget !== widgetRef.current) {
+        widget.remove();
+      } else {
+        widget.innerHTML = '';
+      }
+    });
+  }
+
   useEffect(() => {
     if (activeTourId === null) return;
-    const existing = document.querySelector(`script[src="${BOKUN_SRC}"]`);
-    if (existing) existing.remove();
+    removeExistingBokunScripts();
+    clearPreviousBokunWidget();
+    if (widgetRef.current) {
+      widgetRef.current.innerHTML = '';
+    }
     const script = document.createElement('script');
     script.src = BOKUN_SRC;
     script.async = true;
     document.body.appendChild(script);
-    return () => { script.remove(); };
+    return () => {
+      script.remove();
+      if (widgetRef.current) {
+        widgetRef.current.innerHTML = '';
+      }
+    };
   }, [activeTourId]);
 
   return (
@@ -337,6 +363,7 @@ export default function BokunToursGrid({ searchQuery = '' }: Props) {
 
             <div className="bokun-wrapper p-4" style={{ minHeight: '85vh' }}>
               <div
+                ref={widgetRef}
                 className="bokunWidget"
                 data-src={`https://widgets.bokun.io/online-sales/${CHANNEL_UUID}/experience/${activeTourId}?lang=en`}
               />

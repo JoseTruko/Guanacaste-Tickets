@@ -22,7 +22,7 @@ export async function POST(req: Request) {
     category: t.category,
     difficulty: t.difficulty,
     languages: t.languages,
-    min_group_size: t.minGroupSize,
+    max_group_size: t.minGroupSize,
     images: t.images,
     featured: t.featured,
     included: t.included,

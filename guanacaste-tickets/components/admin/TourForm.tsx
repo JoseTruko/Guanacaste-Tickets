@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { Tour } from '@/types/index';
 import ImageUploader from './ImageUploader';
 
@@ -18,6 +18,10 @@ const empty: Tour = {
 export default function TourForm({ initial, onSave, password }: Props) {
   const [t, setT] = useState<Tour>(initial ?? empty);
   const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    setT(initial ?? empty);
+  }, [initial]);
 
   const set = (field: keyof Tour, value: unknown) => setT((prev) => ({ ...prev, [field]: value }));
   const setArr = (field: keyof Tour, value: string) =>
@@ -62,7 +66,7 @@ export default function TourForm({ initial, onSave, password }: Props) {
     </div>
   );
 
-  const arrayField = (label: string, key: keyof Tour, hint = 'One per line') => (
+  const arrayField = (label: string, key: keyof Tour, hint = 'Uno por línea') => (
     <div>
       <label className="block text-sm font-medium text-gray-700 mb-1">{label} <span className="text-gray-400 font-normal">({hint})</span></label>
       <textarea
@@ -76,32 +80,32 @@ export default function TourForm({ initial, onSave, password }: Props) {
 
   return (
     <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-5">
-      <h2 className="font-heading font-bold text-xl text-gray-900">{initial ? 'Edit Tour' : 'New Tour'}</h2>
+      <h2 className="font-heading font-bold text-xl text-gray-900">{initial ? 'Editar tour' : 'Nuevo tour'}</h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {field('Title', 'title')}
+        {field('Título', 'title')}
       </div>
 
-      {textarea('Short Description', 'shortDescription', 2)}
-      {textarea('Full Description', 'description', 5)}
+      {textarea('Descripción corta', 'shortDescription', 2)}
+      {textarea('Descripción completa', 'description', 5)}
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        {field('Adult Price (USD)', 'price', 'number')}
-        {field('Child Price (USD)', 'childPrice', 'number')}
-        {field('Duration (hours)', 'duration', 'number')}
-        {field('Min Group Size', 'minGroupSize', 'number')}
+        {field('Precio adulto (USD)', 'price', 'number')}
+        {field('Precio niño (USD)', 'childPrice', 'number')}
+        {field('Duración (horas)', 'duration', 'number')}
+        {field('Tamaño mínimo de grupo', 'minGroupSize', 'number')}
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Categoría</label>
           <select value={t.category} onChange={(e) => set('category', e.target.value)}
             className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0077B6]">
             {['Adventure', 'Beach', 'Wildlife', 'Cultural'].map((c) => <option key={c}>{c}</option>)}
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Difficulty</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Dificultad</label>
           <select value={t.difficulty} onChange={(e) => set('difficulty', e.target.value as Tour['difficulty'])}
             className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0077B6]">
             {['Easy', 'Moderate', 'Challenging'].map((d) => <option key={d}>{d}</option>)}
@@ -109,22 +113,22 @@ export default function TourForm({ initial, onSave, password }: Props) {
         </div>
         <div className="flex items-center gap-2 pt-6">
           <input type="checkbox" id="featured" checked={t.featured} onChange={(e) => set('featured', e.target.checked)} className="w-4 h-4" />
-          <label htmlFor="featured" className="text-sm font-medium text-gray-700">Featured Deal</label>
+          <label htmlFor="featured" className="text-sm font-medium text-gray-700">Destacado</label>
         </div>
       </div>
 
-      {arrayField('Languages', 'languages')}
-      {field('Meeting Point', 'meetingPoint')}
-      {arrayField('What\'s Included', 'included')}
-      {arrayField('Not Included', 'notIncluded')}
-      {arrayField('What to Bring', 'whatToBring')}
+      {arrayField('Idiomas', 'languages')}
+      {field('Punto de encuentro', 'meetingPoint')}
+      {arrayField('Qué incluye', 'included')}
+      {arrayField('No incluido', 'notIncluded')}
+      {arrayField('Qué llevar', 'whatToBring')}
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Cancellation Policy</label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Política de cancelación</label>
         <div className="space-y-2">
           <input
             type="text"
-            placeholder="Description"
+            placeholder="Descripción"
             value={t.cancellationPolicy.description}
             onChange={(e) => set('cancellationPolicy', { ...t.cancellationPolicy, description: e.target.value })}
             className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0077B6]"
@@ -133,11 +137,11 @@ export default function TourForm({ initial, onSave, password }: Props) {
             <label className="flex items-center gap-2 text-sm">
               <input type="checkbox" checked={t.cancellationPolicy.freeCancellation}
                 onChange={(e) => set('cancellationPolicy', { ...t.cancellationPolicy, freeCancellation: e.target.checked })} />
-              Free Cancellation
+              Cancelación gratuita
             </label>
             <input
               type="number"
-              placeholder="Deadline hours"
+              placeholder="Horas límite"
               value={t.cancellationPolicy.deadlineHours ?? ''}
               onChange={(e) => set('cancellationPolicy', { ...t.cancellationPolicy, deadlineHours: Number(e.target.value) })}
               className="w-32 border border-gray-300 rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#0077B6]"
@@ -147,13 +151,13 @@ export default function TourForm({ initial, onSave, password }: Props) {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Images</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">Imágenes</label>
         <ImageUploader images={t.images} onChange={(imgs) => set('images', imgs)} password={password} />
       </div>
 
       <button type="submit" disabled={saving}
         className="w-full bg-[#0077B6] text-white font-semibold py-2.5 rounded-md hover:bg-[#005f8e] transition-colors disabled:opacity-50">
-        {saving ? 'Saving…' : 'Save Tour'}
+        {saving ? 'Guardando…' : 'Guardar tour'}
       </button>
     </form>
   );

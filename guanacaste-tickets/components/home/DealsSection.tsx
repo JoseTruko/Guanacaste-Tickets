@@ -11,7 +11,7 @@ export default function DealsSection() {
             Deals & Experiences
           </h2>
           <p className="text-center text-neutral mb-10">
-            Featured tours in Guanacaste and Rincon de la Vieja.
+            Featured tours in Guanacaste and Rincon de la Vi.
           </p>
         </Reveal>
 

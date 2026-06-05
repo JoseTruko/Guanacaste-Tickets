@@ -19,9 +19,10 @@ export async function POST(req: Request) {
   if (!isAdmin(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const body = await req.json();
+  const payload = tourToDb(body);
   const { data, error } = await supabaseAdmin
     .from('tours')
-    .insert(tourToDb(body))
+    .insert(payload)
     .select()
     .single();
 
@@ -36,9 +37,13 @@ function isAdmin(req: Request) {
 }
 
 function tourToDb(t: Tour) {
-  return {
-    id: t.id,
-    slug: t.slug,
+  const id = typeof t.id === 'string' && t.id.trim() ? t.id : `tour-${Date.now()}`;
+  const slug = typeof t.slug === 'string' && t.slug.trim()
+    ? t.slug
+    : t.title.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').trim();
+  const payload: Record<string, unknown> = {
+    id,
+    slug,
     title: t.title,
     description: t.description,
     short_description: t.shortDescription,
@@ -49,7 +54,7 @@ function tourToDb(t: Tour) {
     category: t.category,
     difficulty: t.difficulty,
     languages: t.languages,
-    min_group_size: t.minGroupSize,
+    max_group_size: t.minGroupSize,
     images: t.images,
     featured: t.featured,
     included: t.included,
@@ -60,6 +65,7 @@ function tourToDb(t: Tour) {
     cancellation_policy: t.cancellationPolicy,
     agency_id: t.agencyId,
   };
+  return payload;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -77,7 +83,7 @@ export function dbToTour(r: any): Tour {
     category: r.category,
     difficulty: r.difficulty,
     languages: r.languages,
-    minGroupSize: r.min_group_size,
+    minGroupSize: r.max_group_size,
     images: r.images,
     featured: r.featured,
     included: r.included,

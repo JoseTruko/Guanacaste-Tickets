@@ -44,7 +44,6 @@ function PropertiesManager({ password }: { password: string }) {
     const isNew = !prop.id;
     const method = isNew ? 'POST' : 'PUT';
     const url = isNew ? '/api/properties' : `/api/properties/${prop.id}`;
-    if (isNew) prop.id = `prop-${Date.now()}`;
     await fetch(url, { method, headers: { 'Content-Type': 'application/json', 'x-admin-password': password }, body: JSON.stringify(prop) });
     setEditing(null);
     setCreating(false);

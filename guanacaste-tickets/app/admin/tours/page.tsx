@@ -38,7 +38,6 @@ function ToursManager({ password }: { password: string }) {
     const isNew = !tour.id || tour.id === '';
     const method = isNew ? 'POST' : 'PUT';
     const url = isNew ? '/api/tours' : `/api/tours/${tour.id}`;
-    if (isNew) tour.id = `tour-${Date.now()}`;
     await fetch(url, { method, headers: { 'Content-Type': 'application/json', 'x-admin-password': password }, body: JSON.stringify(tour) });
     setEditing(null);
     setCreating(false);

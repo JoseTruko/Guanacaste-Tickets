@@ -15,10 +15,14 @@ export async function PUT(req: Request, { params }: Params) {
   const { id } = await params;
   const body: Tour = await req.json();
 
+  const slug = typeof body.slug === 'string' && body.slug.trim()
+    ? body.slug
+    : body.title.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').trim();
+
   const { data, error } = await supabaseAdmin
     .from('tours')
     .update({
-      slug: body.slug,
+      slug,
       title: body.title,
       description: body.description,
       short_description: body.shortDescription,
@@ -28,7 +32,7 @@ export async function PUT(req: Request, { params }: Params) {
       category: body.category,
       difficulty: body.difficulty,
       languages: body.languages,
-      min_group_size: body.minGroupSize,
+      max_group_size: body.minGroupSize,
       images: body.images,
       featured: body.featured,
       included: body.included,
