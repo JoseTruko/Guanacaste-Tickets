@@ -19,12 +19,17 @@ export async function POST(req: Request) {
   if (!isAdmin(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const body = await req.json();
-  const payload = tourToDb(body);
-  const { data, error } = await supabaseAdmin
+  let payload = tourToDb(body);
+  let { data, error } = await supabaseAdmin
     .from('tours')
     .insert(payload)
     .select()
     .single();
+
+  if (error && isMissingPricingBracketsColumnError(error)) {
+    payload = tourToDb(body, false);
+    ({ data, error } = await supabaseAdmin.from('tours').insert(payload).select().single());
+  }
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json(dbToTour(data), { status: 201 });
@@ -32,11 +37,15 @@ export async function POST(req: Request) {
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 
+export function isMissingPricingBracketsColumnError(error: any) {
+  return typeof error?.message === 'string' && error.message.includes('pricing_brackets');
+}
+
 function isAdmin(req: Request) {
   return req.headers.get('x-admin-password') === process.env.ADMIN_PASSWORD;
 }
 
-function tourToDb(t: Tour) {
+export function tourToDb(t: Tour, includePricingBrackets = true) {
   const id = typeof t.id === 'string' && t.id.trim() ? t.id : `tour-${Date.now()}`;
   const slug = typeof t.slug === 'string' && t.slug.trim()
     ? t.slug
@@ -65,6 +74,11 @@ function tourToDb(t: Tour) {
     cancellation_policy: t.cancellationPolicy,
     agency_id: t.agencyId,
   };
+
+  if (includePricingBrackets && t.pricingBrackets?.length) {
+    payload.pricing_brackets = t.pricingBrackets;
+  }
+
   return payload;
 }
 
@@ -84,6 +98,7 @@ export function dbToTour(r: any): Tour {
     difficulty: r.difficulty,
     languages: r.languages,
     minGroupSize: r.max_group_size,
+    pricingBrackets: r.pricing_brackets ?? [],
     images: r.images,
     featured: r.featured,
     included: r.included,

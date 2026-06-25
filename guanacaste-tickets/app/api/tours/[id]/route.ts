@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase/client';
-import { dbToTour } from '../route';
+import { dbToTour, tourToDb, isMissingPricingBracketsColumnError } from '../route';
 import type { Tour } from '@/types/index';
 
 type Params = { params: Promise<{ id: string }> };
@@ -19,33 +19,41 @@ export async function PUT(req: Request, { params }: Params) {
     ? body.slug
     : body.title.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').trim();
 
-  const { data, error } = await supabaseAdmin
+  let payload: Record<string, unknown> = {
+    slug,
+    title: body.title,
+    description: body.description,
+    short_description: body.shortDescription,
+    price: body.price,
+    child_price: body.childPrice,
+    pricing_brackets: body.pricingBrackets,
+    duration: body.duration,
+    category: body.category,
+    difficulty: body.difficulty,
+    languages: body.languages,
+    max_group_size: body.minGroupSize,
+    images: body.images,
+    featured: body.featured,
+    included: body.included,
+    not_included: body.notIncluded,
+    meeting_point: body.meetingPoint,
+    what_to_bring: body.whatToBring,
+    faqs: body.faqs,
+    cancellation_policy: body.cancellationPolicy,
+    agency_id: body.agencyId,
+  };
+
+  let { data, error } = await supabaseAdmin
     .from('tours')
-    .update({
-      slug,
-      title: body.title,
-      description: body.description,
-      short_description: body.shortDescription,
-      price: body.price,
-      child_price: body.childPrice,
-      duration: body.duration,
-      category: body.category,
-      difficulty: body.difficulty,
-      languages: body.languages,
-      max_group_size: body.minGroupSize,
-      images: body.images,
-      featured: body.featured,
-      included: body.included,
-      not_included: body.notIncluded,
-      meeting_point: body.meetingPoint,
-      what_to_bring: body.whatToBring,
-      faqs: body.faqs,
-      cancellation_policy: body.cancellationPolicy,
-      agency_id: body.agencyId,
-    })
+    .update(payload)
     .eq('id', id)
     .select()
     .single();
+
+  if (error && isMissingPricingBracketsColumnError(error)) {
+    payload = tourToDb(body, false);
+    ({ data, error } = await supabaseAdmin.from('tours').update(payload).eq('id', id).select().single());
+  }
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json(dbToTour(data));

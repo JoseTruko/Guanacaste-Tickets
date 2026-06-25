@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import type { Tour } from '@/types/index';
-import { calculateTotalPrice } from '@/lib/booking/pricing';
+import { calculateBookingTotal, getTourPricing } from '@/lib/booking/pricing';
 import { paymentGateway } from '@/lib/payment';
 import ParticipantSelector from './ParticipantSelector';
 
@@ -46,12 +46,23 @@ export default function BookingForm({ tour }: BookingFormProps) {
 
   const adults = watch('adults');
   const children = watch('children');
-  const total = calculateTotalPrice(adults, children, tour.price, tour.childPrice);
+  const totalParticipants = adults + children;
+  const pricing = getTourPricing(tour, totalParticipants);
+  const total = calculateBookingTotal(tour, adults, children);
+  const minGroupNotReached = totalParticipants < tour.minGroupSize;
 
   const onBookNow = async (values: FormValues) => {
     setBookLoading(true);
     setErrorMsg('');
-    const subtotal = calculateTotalPrice(values.adults, values.children, tour.price, tour.childPrice);
+    const totalParticipants = values.adults + values.children;
+    if (totalParticipants < tour.minGroupSize) {
+      setErrorMsg(`Minimum ${tour.minGroupSize} people required to book this tour.`);
+      setBookLoading(false);
+      return;
+    }
+
+    const bracketPricing = getTourPricing(tour, totalParticipants);
+    const subtotal = calculateBookingTotal(tour, values.adults, values.children);
     const result = await paymentGateway.processBooking({
       items: [{
         tourId: tour.id,
@@ -60,8 +71,8 @@ export default function BookingForm({ tour }: BookingFormProps) {
         date: values.date,
         adults: values.adults,
         children: values.children,
-        adultPrice: tour.price,
-        childPrice: tour.childPrice,
+        adultPrice: bracketPricing.adultPrice,
+        childPrice: bracketPricing.childPrice,
         subtotal,
       }],
       grandTotal: subtotal,
@@ -87,7 +98,9 @@ export default function BookingForm({ tour }: BookingFormProps) {
           children={children}
           onAdultsChange={(n) => setValue('adults', n, { shouldValidate: true })}
           onChildrenChange={(n) => setValue('children', n, { shouldValidate: true })}
+          minAdults={tour.minGroupSize > 1 ? 1 : 1}
         />
+        <p className="mt-2 text-xs text-gray-500">Minimum group size: {tour.minGroupSize} people.</p>
         {errors.adults && (
           <p className="mt-1 text-xs text-red-600">{errors.adults.message}</p>
         )}
@@ -147,13 +160,13 @@ export default function BookingForm({ tour }: BookingFormProps) {
       {/* Price summary */}
       <div className="bg-gray-50 rounded-md p-3 text-sm space-y-1">
         <div className="flex justify-between text-gray-600">
-          <span>{adults} adult{adults !== 1 ? 's' : ''} × ${tour.price.toFixed(2)}</span>
-          <span>${(adults * tour.price).toFixed(2)}</span>
+          <span>{adults} adult{adults !== 1 ? 's' : ''} × ${pricing.adultPrice.toFixed(2)}</span>
+          <span>${(adults * pricing.adultPrice).toFixed(2)}</span>
         </div>
         {children > 0 && (
           <div className="flex justify-between text-gray-600">
-            <span>{children} child{children !== 1 ? 'ren' : ''} × ${tour.childPrice.toFixed(2)}</span>
-            <span>${(children * tour.childPrice).toFixed(2)}</span>
+            <span>{children} child{children !== 1 ? 'ren' : ''} × ${pricing.childPrice.toFixed(2)}</span>
+            <span>${(children * pricing.childPrice).toFixed(2)}</span>
           </div>
         )}
         <div className="flex justify-between font-semibold text-gray-900 border-t border-gray-200 pt-1 mt-1">
@@ -162,6 +175,11 @@ export default function BookingForm({ tour }: BookingFormProps) {
         </div>
       </div>
 
+      {minGroupNotReached && (
+        <p className="text-sm text-center font-medium text-orange-600">
+          Add {tour.minGroupSize - totalParticipants} more participant{tour.minGroupSize - totalParticipants !== 1 ? 's' : ''} to meet the minimum group size.
+        </p>
+      )}
       {booked ? (
         <div className="rounded-md bg-green-50 border border-green-200 px-4 py-4 text-center">
           <p className="text-green-800 font-semibold text-sm">Booking request sent!</p>
@@ -172,7 +190,7 @@ export default function BookingForm({ tour }: BookingFormProps) {
           <button
             type="button"
             onClick={handleSubmit(onBookNow)}
-            disabled={bookLoading}
+            disabled={bookLoading || minGroupNotReached}
             className="w-full bg-primary text-white font-semibold py-2.5 rounded-md hover:bg-primary-hover transition-colors disabled:opacity-50"
           >
             {bookLoading ? 'Processing…' : 'Book Now'}

@@ -23,6 +23,7 @@ export async function POST(req: Request) {
     difficulty: t.difficulty,
     languages: t.languages,
     max_group_size: t.minGroupSize,
+    pricing_brackets: t.pricingBrackets,
     images: t.images,
     featured: t.featured,
     included: t.included,
@@ -34,9 +35,14 @@ export async function POST(req: Request) {
     agency_id: t.agencyId,
   }));
 
-  const { error: toursError } = await supabaseAdmin
+  let { error: toursError } = await supabaseAdmin
     .from('tours')
     .upsert(tours, { onConflict: 'id' });
+
+  if (toursError && typeof toursError.message === 'string' && toursError.message.includes('pricing_brackets')) {
+    const toursWithoutBrackets = tours.map(({ pricing_brackets, ...rest }) => rest);
+    ({ error: toursError } = await supabaseAdmin.from('tours').upsert(toursWithoutBrackets, { onConflict: 'id' }));
+  }
 
   const properties = getAllProperties().map((p) => ({
     id: p.id,

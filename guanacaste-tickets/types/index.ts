@@ -13,6 +13,13 @@ export interface FAQItem {
   answer: string;
 }
 
+export interface PriceBracket {
+  minPeople: number;
+  maxPeople?: number;
+  adultPrice: number;
+  childPrice: number;
+}
+
 export interface Tour {
   id: string;
   slug: string;
@@ -21,6 +28,7 @@ export interface Tour {
   shortDescription: string;
   price: number;
   childPrice: number;
+  pricingBrackets?: PriceBracket[];
   currency: 'USD';
   duration: number;
   category: TourCategory;

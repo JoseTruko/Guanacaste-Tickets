@@ -8,7 +8,7 @@ type Props = { initial?: Tour; onSave: (t: Tour) => void; password: string };
 
 const empty: Tour = {
   id: '', slug: '', title: '', description: '', shortDescription: '',
-  price: 0, childPrice: 0, currency: 'USD', duration: 0,
+  price: 0, childPrice: 0, pricingBrackets: [], currency: 'USD', duration: 0,
   category: 'Adventure', difficulty: 'Easy', languages: ['English', 'Spanish'],
   minGroupSize: 10, images: [], featured: false,
   included: [], notIncluded: [], meetingPoint: '', whatToBring: [],
@@ -26,6 +26,27 @@ export default function TourForm({ initial, onSave, password }: Props) {
   const set = (field: keyof Tour, value: unknown) => setT((prev) => ({ ...prev, [field]: value }));
   const setArr = (field: keyof Tour, value: string) =>
     set(field, value.split('\n').map((s) => s.trimEnd()));
+
+  const updatePricingBracket = (index: number, field: keyof NonNullable<Tour['pricingBrackets']>[number], value: number | undefined) => {
+    const brackets = t.pricingBrackets ?? [];
+    const next = brackets.map((bracket, idx) =>
+      idx === index ? { ...bracket, [field]: value } : bracket
+    );
+    set('pricingBrackets', next);
+  };
+
+  const addPricingBracket = () => {
+    const brackets = t.pricingBrackets ?? [];
+    set('pricingBrackets', [
+      ...brackets,
+      { minPeople: 1, maxPeople: undefined, adultPrice: 0, childPrice: 0 },
+    ]);
+  };
+
+  const removePricingBracket = (index: number) => {
+    const brackets = t.pricingBrackets ?? [];
+    set('pricingBrackets', brackets.filter((_, idx) => idx !== index));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -94,6 +115,75 @@ export default function TourForm({ initial, onSave, password }: Props) {
         {field('Precio niño (USD)', 'childPrice', 'number')}
         {field('Duración (horas)', 'duration', 'number')}
         {field('Tamaño mínimo de grupo', 'minGroupSize', 'number')}
+      </div>
+
+      <div className="rounded-xl border border-dashed border-gray-300 bg-gray-50 p-4">
+        <div className="flex items-center justify-between mb-3">
+          <div>
+            <h3 className="font-semibold text-gray-900">Precio por grupo</h3>
+            <p className="text-xs text-gray-500">Agrega rangos de participantes para aplicar precios distintos según el tamaño del grupo.</p>
+          </div>
+          <button
+            type="button"
+            onClick={addPricingBracket}
+            className="text-sm text-primary hover:underline"
+          >
+            + Agregar rango
+          </button>
+        </div>
+
+        {(t.pricingBrackets ?? []).map((bracket, index) => (
+          <div key={index} className="grid grid-cols-5 gap-3 items-end mb-3 p-3 bg-white border border-gray-200 rounded-lg">
+            <div>
+              <label className="block text-xs font-medium text-gray-700 mb-1">Min personas</label>
+              <input
+                type="number"
+                min={1}
+                value={bracket.minPeople}
+                onChange={(e) => updatePricingBracket(index, 'minPeople', Number(e.target.value))}
+                className="w-full border border-gray-300 rounded-md px-2 py-1 text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-700 mb-1">Max personas</label>
+              <input
+                type="number"
+                min={0}
+                value={bracket.maxPeople ?? ''}
+                onChange={(e) => updatePricingBracket(index, 'maxPeople', e.target.value ? Number(e.target.value) : undefined)}
+                className="w-full border border-gray-300 rounded-md px-2 py-1 text-sm"
+                placeholder="Sin límite"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-700 mb-1">Precio adulto</label>
+              <input
+                type="number"
+                min={0}
+                value={bracket.adultPrice}
+                onChange={(e) => updatePricingBracket(index, 'adultPrice', Number(e.target.value))}
+                className="w-full border border-gray-300 rounded-md px-2 py-1 text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-700 mb-1">Precio niño</label>
+              <input
+                type="number"
+                min={0}
+                value={bracket.childPrice}
+                onChange={(e) => updatePricingBracket(index, 'childPrice', Number(e.target.value))}
+                className="w-full border border-gray-300 rounded-md px-2 py-1 text-sm"
+              />
+            </div>
+            <button
+              type="button"
+              onClick={() => removePricingBracket(index)}
+              className="text-sm text-red-500 hover:underline"
+            >
+              Eliminar
+            </button>
+          </div>
+        ))}
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">

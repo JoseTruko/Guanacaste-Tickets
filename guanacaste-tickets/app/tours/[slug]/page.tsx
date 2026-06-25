@@ -107,6 +107,24 @@ export default async function TourPage({ params }: PageProps) {
                 <p className="text-xs text-neutral">USD / person</p>
               </div>
             </div>
+            {tour.pricingBrackets && tour.pricingBrackets.length > 0 && (
+              <div className="mt-4 rounded-xl bg-slate-50 border border-slate-200 p-4 text-sm text-slate-700">
+                <p className="font-semibold text-sm text-slate-900 mb-2">Pricing by group size</p>
+                <div className="space-y-2">
+                  {tour.pricingBrackets.map((bracket, index) => (
+                    <div key={index} className="grid grid-cols-2 gap-3">
+                      <span>
+                        {bracket.minPeople}
+                        {bracket.maxPeople ? `–${bracket.maxPeople}` : '+'} people
+                      </span>
+                      <span className="text-right">
+                        Adult ${bracket.adultPrice.toFixed(2)}, Child ${bracket.childPrice.toFixed(2)}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Description */}
             <div>
