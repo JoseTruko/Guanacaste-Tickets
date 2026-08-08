@@ -53,32 +53,6 @@ export interface Agency {
   toursOffered: string[];
 }
 
-export interface Property {
-  id: string;
-  slug?: string;
-  title: string;
-  shortDescription?: string;
-  description?: string;
-  location: string;
-  price: number;
-  currency: 'USD';
-  propertyType?: 'House' | 'Condo' | 'Lot' | 'Villa' | string;
-  status?: 'For Sale' | 'For Rent' | 'Sold' | string;
-  builtArea?: number;
-  landArea?: number;
-  bedrooms?: number;
-  bathrooms?: number;
-  parking?: number;
-  yearBuilt?: number;
-  amenities?: string[];
-  image: string;
-  images?: string[];
-  videoUrl?: string;
-  floorPlanUrl?: string;
-  contactUrl: string;
-  externalUrl?: string;
-}
-
 export interface BookingItem {
   tourId: string;
   tourTitle: string;
@@ -97,6 +71,7 @@ export interface BookingSummary {
   currency: 'USD';
   customerName: string;
   customerEmail: string;
+  gclid?: string;
 }
 
 export interface BookingResult {

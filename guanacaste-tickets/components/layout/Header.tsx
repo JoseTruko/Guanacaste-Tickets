@@ -8,7 +8,6 @@ import { WHATSAPP_NUMBER } from '@/lib/config';
 const navLinks = [
   { label: 'Home', href: '/' },
   { label: 'Tours', href: '/tours' },
-  { label: 'Real Estate', href: '/real-estate' },
   { label: 'Contact', href: '/contact' },
 ];
 

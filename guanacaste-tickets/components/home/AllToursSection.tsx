@@ -2,20 +2,10 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import TourCard from '@/components/tours/TourCard';
-import BokunToursGrid from '@/components/tours/BokunToursGrid';
 import type { Tour } from '@/types/index';
-
-type Tab = 'all' | 'own' | 'partner';
-
-const tabs: { key: Tab; label: string }[] = [
-  { key: 'all', label: 'All Tours' },
-  { key: 'partner', label: 'Regular Tours' },
-  { key: 'own', label: 'Signature Tours' },
-];
 
 export default function AllToursSection() {
   const [allTours, setAllTours] = useState<Tour[]>([]);
-  const [activeTab, setActiveTab] = useState<Tab>('all');
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
@@ -34,10 +24,6 @@ export default function AllToursSection() {
         t.shortDescription?.toLowerCase().includes(q)
     );
   }, [allTours, searchQuery]);
-
-  const showPartner = activeTab === 'all' || activeTab === 'partner';
-  const showOwn = (activeTab === 'all' || activeTab === 'own') && allTours.length > 0;
-  const visibleTabs = allTours.length > 0 ? tabs : tabs.filter((t) => t.key !== 'own');
 
   return (
     <section className="py-8 md:py-16 px-4 bg-white">
@@ -82,43 +68,14 @@ export default function AllToursSection() {
           </div>
         </div>
 
-        {/* Tab pills */}
-        <div className="flex gap-1.5 md:gap-2 justify-center mb-6 md:mb-10">
-          {visibleTabs.map(({ key, label }) => (
-            <button
-              key={key}
-              onClick={() => setActiveTab(key)}
-              className={`px-4 md:px-5 py-1.5 md:py-2 rounded-full text-xs md:text-sm font-semibold border transition-colors duration-150 ${
-                activeTab === key
-                  ? 'bg-primary text-white border-primary shadow-sm'
-                  : 'bg-white text-gray-600 border-gray-300 hover:border-primary hover:text-primary'
-              }`}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-
-        {/* Partner tours (Bokun) */}
-        {showPartner && (
-          <BokunToursGrid searchQuery={searchQuery} />
-        )}
-
-        {/* Own tours — no title in "all" mode */}
-        {showOwn && (
-          <div className={showPartner ? 'mt-6' : ''}>
-            {activeTab === 'own' && (
-              <h2 className="font-heading font-semibold text-xl text-gray-800 mb-6">Our Tours</h2>
-            )}
-            {filteredOwnTours.length === 0 ? (
-              <p className="text-center text-gray-400 py-10">No tours match your search.</p>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredOwnTours.map((tour) => (
-                  <TourCard key={tour.id} tour={tour} />
-                ))}
-              </div>
-            )}
+        {/* Tours grid */}
+        {filteredOwnTours.length === 0 ? (
+          <p className="text-center text-gray-400 py-10">No tours match your search.</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredOwnTours.map((tour) => (
+              <TourCard key={tour.id} tour={tour} />
+            ))}
           </div>
         )}
 

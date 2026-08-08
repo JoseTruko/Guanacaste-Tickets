@@ -191,7 +191,7 @@ export default function TourForm({ initial, onSave, password }: Props) {
           <label className="block text-sm font-medium text-gray-700 mb-1">Categoría</label>
           <select value={t.category} onChange={(e) => set('category', e.target.value)}
             className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0077B6]">
-            {['Adventure', 'Beach', 'Wildlife', 'Cultural'].map((c) => <option key={c}>{c}</option>)}
+            {['Adventure', 'Beach', 'Wildlife', 'Cultural', 'Nature', 'Wellness'].map((c) => <option key={c}>{c}</option>)}
           </select>
         </div>
         <div>

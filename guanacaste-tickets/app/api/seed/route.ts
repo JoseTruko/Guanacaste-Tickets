@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase/client';
 import { getAllTours } from '@/lib/data/tours';
-import { getAllProperties } from '@/lib/data/properties';
 
 // One-time seed endpoint — call once then delete or disable
 export async function POST(req: Request) {
@@ -44,23 +43,9 @@ export async function POST(req: Request) {
     ({ error: toursError } = await supabaseAdmin.from('tours').upsert(toursWithoutBrackets, { onConflict: 'id' }));
   }
 
-  const properties = getAllProperties().map((p) => ({
-    id: p.id,
-    title: p.title,
-    location: p.location,
-    price: p.price,
-    currency: p.currency,
-    image: p.image,
-    contact_url: p.contactUrl,
-  }));
-
-  const { error: propsError } = await supabaseAdmin
-    .from('properties')
-    .upsert(properties, { onConflict: 'id' });
-
-  if (toursError || propsError) {
-    return NextResponse.json({ toursError, propsError }, { status: 500 });
+  if (toursError) {
+    return NextResponse.json({ toursError }, { status: 500 });
   }
 
-  return NextResponse.json({ success: true, tours: tours.length, properties: properties.length });
+  return NextResponse.json({ success: true, tours: tours.length });
 }

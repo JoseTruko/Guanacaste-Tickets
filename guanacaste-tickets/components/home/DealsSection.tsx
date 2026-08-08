@@ -1,8 +1,26 @@
 import Reveal from '@/components/ui/Reveal';
 import Link from 'next/link';
-import BokunToursGrid from '@/components/tours/BokunToursGrid';
+import TourCard from '@/components/tours/TourCard';
+import { getAllToursFromDB } from '@/lib/data/tours-db';
+import type { Tour } from '@/types/index';
 
-export default function DealsSection() {
+const CATEGORIES_TO_SHOW = 3;
+const TOURS_PER_CATEGORY = 3;
+
+export default async function DealsSection() {
+  const allTours = await getAllToursFromDB();
+
+  const byCategory = new Map<string, Tour[]>();
+  for (const tour of allTours) {
+    const list = byCategory.get(tour.category) ?? [];
+    list.push(tour);
+    byCategory.set(tour.category, list);
+  }
+
+  const categories = [...byCategory.entries()]
+    .sort((a, b) => b[1].length - a[1].length)
+    .slice(0, CATEGORIES_TO_SHOW);
+
   return (
     <section id="deals" className="py-16 px-4 bg-bg">
       <div className="max-w-7xl mx-auto">
@@ -15,7 +33,22 @@ export default function DealsSection() {
           </p>
         </Reveal>
 
-        <BokunToursGrid />
+        {categories.length === 0 ? (
+          <p className="text-center text-gray-400 py-10">No tours available yet.</p>
+        ) : (
+          <div className="space-y-12">
+            {categories.map(([category, tours]) => (
+              <div key={category}>
+                <h3 className="font-heading font-bold text-xl text-gray-900 mb-4">{category}</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {tours.slice(0, TOURS_PER_CATEGORY).map((tour) => (
+                    <TourCard key={tour.id} tour={tour} />
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
 
         <Reveal>
           <div className="mt-10 text-center">

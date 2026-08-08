@@ -11,12 +11,6 @@ export default function AdminPage() {
         >
           🗺 Manage Tours
         </Link>
-        <Link
-          href="/admin/properties"
-          className="bg-[#2D5A27] text-white font-semibold px-8 py-4 rounded-lg hover:bg-[#234820] transition-colors text-center"
-        >
-          🏡 Manage Properties
-        </Link>
       </div>
     </div>
   );

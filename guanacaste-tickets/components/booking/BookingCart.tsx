@@ -2,13 +2,16 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useCartStore } from '@/store/cart';
 import { paymentGateway } from '@/lib/payment';
+import { getStoredGclid } from '@/lib/analytics';
 import BookingCartItem from './BookingCartItem';
 
 type CustomerInfo = { name: string; email: string };
 
 export default function BookingCart() {
+  const router = useRouter();
   const items = useCartStore((s) => s.items);
   const grandTotal = useCartStore((s) => s.grandTotal);
   const clearCart = useCartStore((s) => s.clearCart);
@@ -45,17 +48,25 @@ export default function BookingCart() {
     setMessage('');
     setIsError(false);
 
+    const total = grandTotal();
     const result = await paymentGateway.processBooking({
       items,
-      grandTotal: grandTotal(),
+      grandTotal: total,
       currency: 'USD',
       customerName: customer.name,
       customerEmail: customer.email,
+      gclid: getStoredGclid(),
     });
+
+    if (result.success) {
+      clearCart();
+      router.push(`/booking-confirmed?value=${total}`);
+      return;
+    }
 
     setLoading(false);
     setMessage(result.message || 'Something went wrong. Please try again.');
-    setIsError(!result.success);
+    setIsError(true);
   };
 
   return (

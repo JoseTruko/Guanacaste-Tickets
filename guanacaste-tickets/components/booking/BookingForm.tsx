@@ -1,12 +1,14 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import type { Tour } from '@/types/index';
 import { calculateBookingTotal, getTourPricing } from '@/lib/booking/pricing';
 import { paymentGateway } from '@/lib/payment';
+import { getStoredGclid } from '@/lib/analytics';
 import ParticipantSelector from './ParticipantSelector';
 
 const todayStr = () => new Date().toISOString().split('T')[0];
@@ -29,8 +31,8 @@ type BookingFormProps = {
 };
 
 export default function BookingForm({ tour }: BookingFormProps) {
+  const router = useRouter();
   const [bookLoading, setBookLoading] = useState(false);
-  const [booked, setBooked] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
   const {
@@ -79,10 +81,11 @@ export default function BookingForm({ tour }: BookingFormProps) {
       currency: 'USD',
       customerName: values.name,
       customerEmail: values.email,
+      gclid: getStoredGclid(),
     });
     setBookLoading(false);
     if (result.success) {
-      setBooked(true);
+      router.push(`/booking-confirmed?tour=${encodeURIComponent(tour.title)}&value=${subtotal}`);
     } else {
       setErrorMsg(result.message || 'Something went wrong. Please try again.');
     }
@@ -180,25 +183,16 @@ export default function BookingForm({ tour }: BookingFormProps) {
           Add {tour.minGroupSize - totalParticipants} more participant{tour.minGroupSize - totalParticipants !== 1 ? 's' : ''} to meet the minimum group size.
         </p>
       )}
-      {booked ? (
-        <div className="rounded-md bg-green-50 border border-green-200 px-4 py-4 text-center">
-          <p className="text-green-800 font-semibold text-sm">Booking request sent!</p>
-          <p className="text-green-700 text-xs mt-1">Check your email. We'll confirm availability shortly.</p>
-        </div>
-      ) : (
-        <>
-          <button
-            type="button"
-            onClick={handleSubmit(onBookNow)}
-            disabled={bookLoading || minGroupNotReached}
-            className="w-full bg-primary text-white font-semibold py-2.5 rounded-md hover:bg-primary-hover transition-colors disabled:opacity-50"
-          >
-            {bookLoading ? 'Processing…' : 'Book Now'}
-          </button>
-          {errorMsg && (
-            <p className="text-sm text-center font-medium text-red-600">{errorMsg}</p>
-          )}
-        </>
+      <button
+        type="button"
+        onClick={handleSubmit(onBookNow)}
+        disabled={bookLoading || minGroupNotReached}
+        className="w-full bg-primary text-white font-semibold py-2.5 rounded-md hover:bg-primary-hover transition-colors disabled:opacity-50"
+      >
+        {bookLoading ? 'Processing…' : 'Book Now'}
+      </button>
+      {errorMsg && (
+        <p className="text-sm text-center font-medium text-red-600">{errorMsg}</p>
       )}
     </form>
   );

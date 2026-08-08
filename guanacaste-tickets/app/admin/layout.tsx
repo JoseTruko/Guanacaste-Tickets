@@ -5,7 +5,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <span className="font-heading font-bold text-lg">🌴 Admin — Guanacaste Tickets</span>
         <div className="flex gap-4 text-sm font-medium">
           <a href="/admin/tours" className="hover:text-green-200 transition-colors">Tours</a>
-          <a href="/admin/properties" className="hover:text-green-200 transition-colors">Properties</a>
           <a href="/" className="hover:text-green-200 transition-colors">← Site</a>
         </div>
       </nav>

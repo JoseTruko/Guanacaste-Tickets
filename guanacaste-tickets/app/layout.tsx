@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
+import Script from 'next/script';
 import { Poppins, DM_Sans } from 'next/font/google';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
+import GclidCapture from '@/components/analytics/GclidCapture';
 import { SITE_URL } from '@/lib/config';
 import '@/styles/globals.css';
 
@@ -35,9 +37,29 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const gaId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+  const adsId = process.env.NEXT_PUBLIC_GOOGLE_ADS_ID;
+  const trackingId = gaId || adsId;
+
   return (
     <html lang="en" className={`${poppins.variable} ${dmSans.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
+        {trackingId && (
+          <>
+            <Script src={`https://www.googletagmanager.com/gtag/js?id=${trackingId}`} strategy="afterInteractive" />
+            <Script id="gtag-init" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                ${gaId ? `gtag('config', '${gaId}');` : ''}
+                ${adsId ? `gtag('config', '${adsId}');` : ''}
+                window.gtag = gtag;
+              `}
+            </Script>
+          </>
+        )}
+        <GclidCapture />
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />
