@@ -13,7 +13,47 @@ const difficultyStyles: Record<Tour['difficulty'], string> = {
   Challenging: 'bg-red-100 text-red-700',
 };
 
-export default function TourCard({ tour }: TourCardProps) {
+export default function TourCard({ tour, variant = 'standard' }: TourCardProps) {
+  if (variant === 'featured') {
+    return (
+      <Link
+        href={`/tours/${tour.slug}`}
+        className="group block relative pb-8"
+      >
+        {/* Green backdrop */}
+        <div className="absolute inset-x-3 bottom-0 h-2/5 rounded-2xl bg-primary transition-colors duration-300 group-hover:bg-primary-hover" />
+
+        {/* Image */}
+        <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-md">
+          {tour.images[0] ? (
+            <Image
+              src={tour.images[0]}
+              alt={`${tour.title} tour`}
+              fill
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              className="object-cover transition-transform duration-500 group-hover:scale-105"
+            />
+          ) : (
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/70 to-secondary/90" />
+          )}
+        </div>
+
+        {/* Overlapping content card */}
+        <div className="relative mx-4 -mt-8 bg-white rounded-xl shadow-lg px-4 py-4 text-center">
+          <span className="text-primary text-[11px] font-semibold uppercase tracking-wide">
+            {tour.category}
+          </span>
+          <h3 className="font-heading font-bold text-gray-900 text-lg leading-snug mt-1 line-clamp-2 group-hover:text-primary transition-colors">
+            {tour.title}
+          </h3>
+          <p className="text-sm text-gray-500 leading-relaxed line-clamp-2 mt-1">
+            {tour.shortDescription}
+          </p>
+        </div>
+      </Link>
+    );
+  }
+
   return (
     <Link
       href={`/tours/${tour.slug}`}

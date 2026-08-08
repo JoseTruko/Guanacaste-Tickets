@@ -42,7 +42,7 @@ export default async function DealsSection() {
                 <h3 className="font-heading font-bold text-xl text-gray-900 mb-4">{category}</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                   {tours.slice(0, TOURS_PER_CATEGORY).map((tour) => (
-                    <TourCard key={tour.id} tour={tour} />
+                    <TourCard key={tour.id} tour={tour} variant="featured" />
                   ))}
                 </div>
               </div>
