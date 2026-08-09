@@ -8,7 +8,7 @@ type Props = { initial?: Tour; onSave: (t: Tour) => void; password: string };
 
 const empty: Tour = {
   id: '', slug: '', title: '', description: '', shortDescription: '',
-  price: 0, childPrice: 0, pricingBrackets: [], currency: 'USD', duration: 0,
+  price: 0, childPrice: 0, pricingBrackets: [], transportZones: [], currency: 'USD', duration: 0,
   category: 'Adventure', difficulty: 'Easy', languages: ['English', 'Spanish'],
   minGroupSize: 10, images: [], featured: false,
   included: [], notIncluded: [], meetingPoint: '', whatToBring: [],
@@ -48,6 +48,25 @@ export default function TourForm({ initial, onSave, password }: Props) {
     set('pricingBrackets', brackets.filter((_, idx) => idx !== index));
   };
 
+  const updateTransportZone = (index: number, field: keyof NonNullable<Tour['transportZones']>[number], value: string | number | string[]) => {
+    const zones = t.transportZones ?? [];
+    const next = zones.map((zone, idx) => (idx === index ? { ...zone, [field]: value } : zone));
+    set('transportZones', next);
+  };
+
+  const addTransportZone = () => {
+    const zones = t.transportZones ?? [];
+    set('transportZones', [
+      ...zones,
+      { id: `zone-${Date.now()}`, name: '', description: '', pricePerPerson: 0, included: [] },
+    ]);
+  };
+
+  const removeTransportZone = (index: number) => {
+    const zones = t.transportZones ?? [];
+    set('transportZones', zones.filter((_, idx) => idx !== index));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
@@ -57,6 +76,10 @@ export default function TourForm({ initial, onSave, password }: Props) {
       notIncluded: t.notIncluded.filter(Boolean),
       whatToBring: t.whatToBring.filter(Boolean),
       languages: t.languages.filter(Boolean),
+      transportZones: (t.transportZones ?? []).map((zone) => ({
+        ...zone,
+        included: zone.included.map((s) => s.trim()).filter(Boolean),
+      })),
       slug: t.title.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').trim(),
     };
     await onSave(cleaned);
@@ -182,6 +205,75 @@ export default function TourForm({ initial, onSave, password }: Props) {
             >
               Eliminar
             </button>
+          </div>
+        ))}
+      </div>
+
+      <div className="rounded-xl border border-dashed border-gray-300 bg-gray-50 p-4">
+        <div className="flex items-center justify-between mb-3">
+          <div>
+            <h3 className="font-semibold text-gray-900">Zonas de transporte</h3>
+            <p className="text-xs text-gray-500">Extra opcional que el cliente puede elegir al reservar. Agrega las zonas de recogida disponibles para este tour.</p>
+          </div>
+          <button
+            type="button"
+            onClick={addTransportZone}
+            className="text-sm text-primary hover:underline"
+          >
+            + Agregar zona
+          </button>
+        </div>
+
+        {(t.transportZones ?? []).map((zone, index) => (
+          <div key={zone.id} className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3 p-3 bg-white border border-gray-200 rounded-lg">
+            <div>
+              <label className="block text-xs font-medium text-gray-700 mb-1">Nombre</label>
+              <input
+                type="text"
+                value={zone.name}
+                onChange={(e) => updateTransportZone(index, 'name', e.target.value)}
+                className="w-full border border-gray-300 rounded-md px-2 py-1 text-sm"
+                placeholder="Zona 1"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-700 mb-1">Precio por persona (USD)</label>
+              <input
+                type="number"
+                min={0}
+                value={zone.pricePerPerson}
+                onChange={(e) => updateTransportZone(index, 'pricePerPerson', Number(e.target.value))}
+                className="w-full border border-gray-300 rounded-md px-2 py-1 text-sm"
+              />
+            </div>
+            <div className="sm:col-span-2">
+              <label className="block text-xs font-medium text-gray-700 mb-1">Descripción</label>
+              <input
+                type="text"
+                value={zone.description}
+                onChange={(e) => updateTransportZone(index, 'description', e.target.value)}
+                className="w-full border border-gray-300 rounded-md px-2 py-1 text-sm"
+                placeholder="Playas Hermosa, El Coco, Panamá, Matapalo & Papagayo Peninsula"
+              />
+            </div>
+            <div className="sm:col-span-2">
+              <label className="block text-xs font-medium text-gray-700 mb-1">Qué incluye <span className="text-gray-400 font-normal">(uno por línea)</span></label>
+              <textarea
+                rows={2}
+                value={zone.included.join('\n')}
+                onChange={(e) => updateTransportZone(index, 'included', e.target.value.split('\n'))}
+                className="w-full border border-gray-300 rounded-md px-2 py-1 text-sm resize-y"
+              />
+            </div>
+            <div className="sm:col-span-2">
+              <button
+                type="button"
+                onClick={() => removeTransportZone(index)}
+                className="text-sm text-red-500 hover:underline"
+              >
+                Eliminar
+              </button>
+            </div>
           </div>
         ))}
       </div>

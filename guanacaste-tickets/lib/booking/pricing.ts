@@ -1,4 +1,4 @@
-import type { BookingItem, Tour } from '@/types/index';
+import type { BookingItem, Tour, TransportZone } from '@/types/index';
 
 /**
  * Price values used for a booking line item.
@@ -41,6 +41,14 @@ export function getTourPricing(tour: Tour, totalParticipants: number): UnitPrice
   return { adultPrice: bracket.adultPrice, childPrice: bracket.childPrice };
 }
 
+/**
+ * Cheapest adult price across the base price and all pricing brackets.
+ */
+export function getFromPrice(tour: Tour): number {
+  const prices = [tour.price, ...(tour.pricingBrackets?.map((bracket) => bracket.adultPrice) ?? [])];
+  return Math.min(...prices);
+}
+
 export function calculateBookingTotal(tour: Tour, adults: number, children: number): number {
   const participants = adults + children;
   const pricing = getTourPricing(tour, participants);
@@ -52,4 +60,16 @@ export function calculateBookingTotal(tour: Tour, adults: number, children: numb
  */
 export function calculateGrandTotal(items: BookingItem[]): number {
   return items.reduce((sum, item) => sum + item.subtotal, 0);
+}
+
+/**
+ * Cost of an optional transport zone, charged per person.
+ */
+export function calculateTransportCost(
+  zone: TransportZone | undefined,
+  adults: number,
+  children: number,
+): number {
+  if (!zone) return 0;
+  return (adults + children) * zone.pricePerPerson;
 }

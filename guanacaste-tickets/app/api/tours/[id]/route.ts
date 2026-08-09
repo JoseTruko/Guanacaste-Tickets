@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase/client';
-import { dbToTour, tourToDb, isMissingPricingBracketsColumnError } from '../route';
+import { dbToTour, tourToDb, isMissingPricingBracketsColumnError, isMissingTransportZonesColumnError } from '../route';
 import type { Tour } from '@/types/index';
 
 type Params = { params: Promise<{ id: string }> };
@@ -27,6 +27,7 @@ export async function PUT(req: Request, { params }: Params) {
     price: body.price,
     child_price: body.childPrice,
     pricing_brackets: body.pricingBrackets,
+    transport_zones: body.transportZones,
     duration: body.duration,
     category: body.category,
     difficulty: body.difficulty,
@@ -50,8 +51,18 @@ export async function PUT(req: Request, { params }: Params) {
     .select()
     .single();
 
+  let includePricingBrackets = true;
+  let includeTransportZones = true;
+
   if (error && isMissingPricingBracketsColumnError(error)) {
-    payload = tourToDb(body, false);
+    includePricingBrackets = false;
+    payload = tourToDb(body, includePricingBrackets, includeTransportZones);
+    ({ data, error } = await supabaseAdmin.from('tours').update(payload).eq('id', id).select().single());
+  }
+
+  if (error && isMissingTransportZonesColumnError(error)) {
+    includeTransportZones = false;
+    payload = tourToDb(body, includePricingBrackets, includeTransportZones);
     ({ data, error } = await supabaseAdmin.from('tours').update(payload).eq('id', id).select().single());
   }
 

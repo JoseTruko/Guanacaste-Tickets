@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import type { Tour } from '@/types/index';
+import { getFromPrice } from '@/lib/booking/pricing';
 
 type TourCardProps = {
   tour: Tour;
@@ -14,6 +15,8 @@ const difficultyStyles: Record<Tour['difficulty'], string> = {
 };
 
 export default function TourCard({ tour, variant = 'standard' }: TourCardProps) {
+  const fromPrice = getFromPrice(tour);
+
   if (variant === 'featured') {
     return (
       <Link
@@ -48,6 +51,9 @@ export default function TourCard({ tour, variant = 'standard' }: TourCardProps) 
           </h3>
           <p className="text-sm text-gray-500 leading-relaxed line-clamp-2 mt-1">
             {tour.shortDescription}
+          </p>
+          <p className="text-primary font-bold mt-1">
+            From ${fromPrice}
           </p>
         </div>
       </Link>
@@ -113,10 +119,15 @@ export default function TourCard({ tour, variant = 'standard' }: TourCardProps) 
           </span>
         </div>
 
-        {/* Book Now */}
-        <span className="mt-1 self-end bg-primary text-white text-xs font-semibold px-3 py-1.5 border border-primary rounded-sm group-hover:bg-primary-hover transition-colors whitespace-nowrap">
-          Book Now
-        </span>
+        {/* Price + Book Now */}
+        <div className="flex items-center justify-between mt-1">
+          <span className="text-lg font-bold text-primary">
+            From ${fromPrice}
+          </span>
+          <span className="bg-primary text-white text-xs font-semibold px-3 py-1.5 border border-primary rounded-sm group-hover:bg-primary-hover transition-colors whitespace-nowrap">
+            Book Now
+          </span>
+        </div>
       </div>
     </Link>
   );

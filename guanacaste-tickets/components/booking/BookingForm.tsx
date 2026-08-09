@@ -6,10 +6,11 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import type { Tour } from '@/types/index';
-import { calculateBookingTotal, getTourPricing } from '@/lib/booking/pricing';
+import { calculateBookingTotal, calculateTransportCost, getTourPricing } from '@/lib/booking/pricing';
 import { paymentGateway } from '@/lib/payment';
 import { getStoredGclid } from '@/lib/analytics';
 import ParticipantSelector from './ParticipantSelector';
+import TransportZoneSelector from './TransportZoneSelector';
 
 const todayStr = () => new Date().toISOString().split('T')[0];
 
@@ -34,6 +35,7 @@ export default function BookingForm({ tour }: BookingFormProps) {
   const router = useRouter();
   const [bookLoading, setBookLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [transportZoneId, setTransportZoneId] = useState<string | null>(null);
 
   const {
     register,
@@ -50,7 +52,9 @@ export default function BookingForm({ tour }: BookingFormProps) {
   const children = watch('children');
   const totalParticipants = adults + children;
   const pricing = getTourPricing(tour, totalParticipants);
-  const total = calculateBookingTotal(tour, adults, children);
+  const selectedZone = tour.transportZones?.find((z) => z.id === transportZoneId);
+  const transportCost = calculateTransportCost(selectedZone, adults, children);
+  const total = calculateBookingTotal(tour, adults, children) + transportCost;
   const minGroupNotReached = totalParticipants < tour.minGroupSize;
 
   const onBookNow = async (values: FormValues) => {
@@ -64,7 +68,10 @@ export default function BookingForm({ tour }: BookingFormProps) {
     }
 
     const bracketPricing = getTourPricing(tour, totalParticipants);
-    const subtotal = calculateBookingTotal(tour, values.adults, values.children);
+    const tourSubtotal = calculateBookingTotal(tour, values.adults, values.children);
+    const zone = tour.transportZones?.find((z) => z.id === transportZoneId);
+    const transportSubtotal = calculateTransportCost(zone, values.adults, values.children);
+    const subtotal = tourSubtotal + transportSubtotal;
     const result = await paymentGateway.processBooking({
       items: [{
         tourId: tour.id,
@@ -75,6 +82,7 @@ export default function BookingForm({ tour }: BookingFormProps) {
         children: values.children,
         adultPrice: bracketPricing.adultPrice,
         childPrice: bracketPricing.childPrice,
+        ...(zone ? { transportZone: { id: zone.id, name: zone.name, pricePerPerson: zone.pricePerPerson }, transportSubtotal } : {}),
         subtotal,
       }],
       grandTotal: subtotal,
@@ -108,6 +116,19 @@ export default function BookingForm({ tour }: BookingFormProps) {
           <p className="mt-1 text-xs text-red-600">{errors.adults.message}</p>
         )}
       </div>
+
+      {/* Transport zones */}
+      {tour.transportZones && tour.transportZones.length > 0 && (
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Transporte</label>
+          <TransportZoneSelector
+            zones={tour.transportZones}
+            participants={totalParticipants}
+            selectedId={transportZoneId}
+            onChange={setTransportZoneId}
+          />
+        </div>
+      )}
 
       {/* Date */}
       <div>
@@ -170,6 +191,12 @@ export default function BookingForm({ tour }: BookingFormProps) {
           <div className="flex justify-between text-gray-600">
             <span>{children} child{children !== 1 ? 'ren' : ''} × ${pricing.childPrice.toFixed(2)}</span>
             <span>${(children * pricing.childPrice).toFixed(2)}</span>
+          </div>
+        )}
+        {selectedZone && (
+          <div className="flex justify-between text-gray-600">
+            <span>Transporte: {selectedZone.name}</span>
+            <span>${transportCost.toFixed(2)}</span>
           </div>
         )}
         <div className="flex justify-between font-semibold text-gray-900 border-t border-gray-200 pt-1 mt-1">

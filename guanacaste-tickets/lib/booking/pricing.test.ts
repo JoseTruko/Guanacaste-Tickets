@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { calculateSubtotal, calculateTotalPrice, calculateGrandTotal } from './pricing';
-import type { BookingItem } from '@/types/index';
+import { calculateSubtotal, calculateTotalPrice, calculateGrandTotal, calculateTransportCost } from './pricing';
+import type { BookingItem, TransportZone } from '@/types/index';
 
 const makeItem = (adults: number, children: number, adultPrice: number, childPrice: number): BookingItem => ({
   tourId: 'tour-1',
@@ -52,5 +52,27 @@ describe('calculateGrandTotal', () => {
   it('handles single item', () => {
     const items: BookingItem[] = [makeItem(3, 1, 40, 20)];
     expect(calculateGrandTotal(items)).toBe(140);
+  });
+});
+
+describe('calculateTransportCost', () => {
+  const zone: TransportZone = {
+    id: 'zone-1',
+    name: 'Zone 1',
+    description: 'Playas Hermosa, El Coco',
+    pricePerPerson: 10,
+    included: ['Round trip pickup'],
+  };
+
+  it('returns 0 when no zone is selected', () => {
+    expect(calculateTransportCost(undefined, 2, 1)).toBe(0);
+  });
+
+  it('multiplies price per person by total participants', () => {
+    expect(calculateTransportCost(zone, 2, 1)).toBe(30);
+  });
+
+  it('returns 0 when there are no participants', () => {
+    expect(calculateTransportCost(zone, 0, 0)).toBe(0);
   });
 });

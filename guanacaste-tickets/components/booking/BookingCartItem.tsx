@@ -29,6 +29,11 @@ export default function BookingCartItem({ item }: BookingCartItemProps) {
           {item.adults} adult{item.adults !== 1 ? 's' : ''}
           {item.children > 0 && ` + ${item.children} child${item.children !== 1 ? 'ren' : ''}`}
         </p>
+        {item.transportZone && (
+          <p className="text-xs text-gray-600">
+            Transport: {item.transportZone.name} — ${(item.transportSubtotal ?? 0).toFixed(2)}
+          </p>
+        )}
         <p className="text-sm font-semibold text-gray-900">${item.subtotal.toFixed(2)} USD</p>
       </div>
       <button

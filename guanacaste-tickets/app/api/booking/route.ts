@@ -7,7 +7,7 @@ function buildAdminHtml(summary: BookingSummary): string {
     .map(
       (item) => `
         <tr>
-          <td style="padding:8px;border:1px solid #e5e7eb">${item.tourTitle}</td>
+          <td style="padding:8px;border:1px solid #e5e7eb">${item.tourTitle}${item.transportZone ? `<br/><span style="color:#6b7280;font-size:12px">Transporte: ${item.transportZone.name}</span>` : ''}</td>
           <td style="padding:8px;border:1px solid #e5e7eb">${item.date}</td>
           <td style="padding:8px;border:1px solid #e5e7eb">${item.adults}</td>
           <td style="padding:8px;border:1px solid #e5e7eb">${item.children}</td>
@@ -43,7 +43,7 @@ function buildCustomerHtml(summary: BookingSummary): string {
     .map(
       (item) => `
         <tr>
-          <td style="padding:8px;border:1px solid #e5e7eb">${item.tourTitle}</td>
+          <td style="padding:8px;border:1px solid #e5e7eb">${item.tourTitle}${item.transportZone ? `<br/><span style="color:#6b7280;font-size:12px">Transport: ${item.transportZone.name}</span>` : ''}</td>
           <td style="padding:8px;border:1px solid #e5e7eb">${item.date}</td>
           <td style="padding:8px;border:1px solid #e5e7eb">${item.adults} adult${item.adults !== 1 ? 's' : ''}${item.children > 0 ? ` / ${item.children} child${item.children !== 1 ? 'ren' : ''}` : ''}</td>
           <td style="padding:8px;border:1px solid #e5e7eb">$${item.subtotal.toFixed(2)}</td>

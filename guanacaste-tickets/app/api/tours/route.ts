@@ -19,7 +19,9 @@ export async function POST(req: Request) {
   if (!isAdmin(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const body = await req.json();
-  let payload = tourToDb(body);
+  let includePricingBrackets = true;
+  let includeTransportZones = true;
+  let payload = tourToDb(body, includePricingBrackets, includeTransportZones);
   let { data, error } = await supabaseAdmin
     .from('tours')
     .insert(payload)
@@ -27,7 +29,14 @@ export async function POST(req: Request) {
     .single();
 
   if (error && isMissingPricingBracketsColumnError(error)) {
-    payload = tourToDb(body, false);
+    includePricingBrackets = false;
+    payload = tourToDb(body, includePricingBrackets, includeTransportZones);
+    ({ data, error } = await supabaseAdmin.from('tours').insert(payload).select().single());
+  }
+
+  if (error && isMissingTransportZonesColumnError(error)) {
+    includeTransportZones = false;
+    payload = tourToDb(body, includePricingBrackets, includeTransportZones);
     ({ data, error } = await supabaseAdmin.from('tours').insert(payload).select().single());
   }
 
@@ -41,11 +50,15 @@ export function isMissingPricingBracketsColumnError(error: any) {
   return typeof error?.message === 'string' && error.message.includes('pricing_brackets');
 }
 
+export function isMissingTransportZonesColumnError(error: any) {
+  return typeof error?.message === 'string' && error.message.includes('transport_zones');
+}
+
 function isAdmin(req: Request) {
   return req.headers.get('x-admin-password') === process.env.ADMIN_PASSWORD;
 }
 
-export function tourToDb(t: Tour, includePricingBrackets = true) {
+export function tourToDb(t: Tour, includePricingBrackets = true, includeTransportZones = true) {
   const id = typeof t.id === 'string' && t.id.trim() ? t.id : `tour-${Date.now()}`;
   const slug = typeof t.slug === 'string' && t.slug.trim()
     ? t.slug
@@ -79,6 +92,10 @@ export function tourToDb(t: Tour, includePricingBrackets = true) {
     payload.pricing_brackets = t.pricingBrackets;
   }
 
+  if (includeTransportZones && t.transportZones?.length) {
+    payload.transport_zones = t.transportZones;
+  }
+
   return payload;
 }
 
@@ -99,6 +116,7 @@ export function dbToTour(r: any): Tour {
     languages: r.languages,
     minGroupSize: r.max_group_size,
     pricingBrackets: r.pricing_brackets ?? [],
+    transportZones: r.transport_zones ?? [],
     images: r.images,
     featured: r.featured,
     included: r.included,

@@ -20,6 +20,14 @@ export interface PriceBracket {
   childPrice: number;
 }
 
+export interface TransportZone {
+  id: string;
+  name: string;
+  description: string;
+  pricePerPerson: number;
+  included: string[];
+}
+
 export interface Tour {
   id: string;
   slug: string;
@@ -29,6 +37,7 @@ export interface Tour {
   price: number;
   childPrice: number;
   pricingBrackets?: PriceBracket[];
+  transportZones?: TransportZone[];
   currency: 'USD';
   duration: number;
   category: TourCategory;
@@ -62,6 +71,8 @@ export interface BookingItem {
   children: number;
   adultPrice: number;
   childPrice: number;
+  transportZone?: { id: string; name: string; pricePerPerson: number };
+  transportSubtotal?: number;
   subtotal: number;
 }
 
