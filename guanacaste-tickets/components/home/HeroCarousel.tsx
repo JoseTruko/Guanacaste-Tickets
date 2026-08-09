@@ -37,9 +37,6 @@ export default function HeroCarousel({ images }: Props) {
       <div className="absolute inset-0 bg-black/40 z-10" aria-hidden="true" />
       <div className="absolute inset-0 bg-gradient-to-r from-secondary/80 via-black/20 to-transparent z-10" aria-hidden="true" />
 
-      {/* Bottom gradient */}
-      <div className="absolute bottom-0 left-0 right-0 h-28 bg-gradient-to-t from-bg to-transparent z-10" aria-hidden="true" />
-
       {/* Content */}
       <div className="relative z-20 w-full max-w-7xl mx-auto px-4 md:pl-12 lg:pl-20">
         <div className="flex flex-col items-center text-center md:items-start md:text-left gap-5 md:max-w-xl">
