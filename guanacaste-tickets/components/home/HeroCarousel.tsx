@@ -48,10 +48,10 @@ export default function HeroCarousel({ images }: Props) {
             Guanacaste, Costa Rica
           </p>
           <h1 className="font-heading font-bold text-white text-4xl md:text-5xl lg:text-6xl leading-tight animate-fade-up delay-200">
-            Beyond the beach.
+            Guanacaste's Best Tours, Booked Direct.
           </h1>
           <p className="text-white/85 text-base md:text-lg animate-fade-up delay-300 max-w-sm md:max-w-lg">
-            Expert-led tours with people who actually live here.
+            Book adventure, wildlife & nature tours today.
           </p>
 
           {/* CTAs */}
@@ -60,7 +60,7 @@ export default function HeroCarousel({ images }: Props) {
               href="/tours"
               className="inline-flex items-center justify-center bg-primary text-white font-semibold px-7 py-2.5 border border-primary rounded-sm hover:bg-primary-hover transition-colors text-sm shadow-lg"
             >
-              Explore Tours
+              See Prices & Book Today
             </Link>
             <a
               href={`https://wa.me/${WHATSAPP_NUMBER}`}
