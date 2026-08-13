@@ -30,6 +30,7 @@ export async function PUT(req: Request, { params }: Params) {
     transport_zones: body.transportZones,
     duration: body.duration,
     category: body.category,
+    location: body.location,
     difficulty: body.difficulty,
     languages: body.languages,
     max_group_size: body.minGroupSize,

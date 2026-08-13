@@ -3,13 +3,15 @@
 import { useEffect, useState } from 'react';
 import type { Tour } from '@/types/index';
 import ImageUploader from './ImageUploader';
+import { CATEGORIES } from '@/lib/data/categories';
+import { PLACES } from '@/lib/data/places';
 
 type Props = { initial?: Tour; onSave: (t: Tour) => void; password: string };
 
 const empty: Tour = {
   id: '', slug: '', title: '', description: '', shortDescription: '',
   price: 0, childPrice: 0, pricingBrackets: [], transportZones: [], currency: 'USD', duration: 0,
-  category: 'Adventure', difficulty: 'Easy', languages: ['English', 'Spanish'],
+  category: 'Adventure', location: undefined, difficulty: 'Easy', languages: ['English', 'Spanish'],
   minGroupSize: 10, images: [], featured: false,
   included: [], notIncluded: [], meetingPoint: '', whatToBring: [],
   faqs: [], cancellationPolicy: { description: '', freeCancellation: true, deadlineHours: 24 },
@@ -283,7 +285,15 @@ export default function TourForm({ initial, onSave, password }: Props) {
           <label className="block text-sm font-medium text-gray-700 mb-1">Categoría</label>
           <select value={t.category} onChange={(e) => set('category', e.target.value)}
             className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0077B6]">
-            {['Adventure', 'Beach', 'Wildlife', 'Cultural', 'Nature', 'Wellness'].map((c) => <option key={c}>{c}</option>)}
+            {CATEGORIES.map((c) => <option key={c}>{c}</option>)}
+          </select>
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Lugar</label>
+          <select value={t.location ?? ''} onChange={(e) => set('location', e.target.value || undefined)}
+            className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0077B6]">
+            <option value="">—</option>
+            {PLACES.map((p) => <option key={p.slug} value={p.name}>{p.name}</option>)}
           </select>
         </div>
         <div>

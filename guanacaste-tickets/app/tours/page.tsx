@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import ToursPageContent from '@/components/tours/ToursPageContent';
 import { getAllToursFromDB } from '@/lib/data/tours-db';
 import type { Metadata } from 'next';
@@ -14,7 +15,9 @@ export default async function ToursPage() {
 
   return (
     <main>
-      <ToursPageContent tours={tours} />
+      <Suspense fallback={null}>
+        <ToursPageContent tours={tours} />
+      </Suspense>
     </main>
   );
 }

@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next';
 import { getAllToursFromDB } from '@/lib/data/tours-db';
+import { PLACES } from '@/lib/data/places';
 import { SITE_URL } from '@/lib/config';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -8,6 +9,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const tourEntries: MetadataRoute.Sitemap = tours.map((tour) => ({
     url: `${SITE_URL}/tours/${tour.slug}`,
     priority: 0.8,
+    changeFrequency: 'weekly',
+  }));
+
+  const placeEntries: MetadataRoute.Sitemap = PLACES.map((place) => ({
+    url: `${SITE_URL}/places/${place.slug}`,
+    priority: 0.7,
     changeFrequency: 'weekly',
   }));
 
@@ -21,5 +28,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/privacy`, priority: 0.3, changeFrequency: 'yearly', lastModified: new Date('2025-01-01') },
     { url: `${SITE_URL}/terms`, priority: 0.3, changeFrequency: 'yearly', lastModified: new Date('2025-01-01') },
     ...tourEntries,
+    ...placeEntries,
   ];
 }

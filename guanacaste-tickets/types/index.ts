@@ -41,6 +41,7 @@ export interface Tour {
   currency: 'USD';
   duration: number;
   category: TourCategory;
+  location?: string;
   difficulty: 'Easy' | 'Moderate' | 'Challenging';
   languages: string[];
   minGroupSize: number;
