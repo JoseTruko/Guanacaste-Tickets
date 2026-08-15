@@ -215,7 +215,7 @@ export default function TourForm({ initial, onSave, password }: Props) {
         <div className="flex items-center justify-between mb-3">
           <div>
             <h3 className="font-semibold text-gray-900">Zonas de transporte</h3>
-            <p className="text-xs text-gray-500">Extra opcional que el cliente puede elegir al reservar. Agrega las zonas de recogida disponibles para este tour.</p>
+            <p className="text-xs text-gray-500">Extra opcional que el cliente puede elegir al reservar. El precio de cada zona es el precio final por persona (ya incluye el tour + el transporte), no se suma al precio base del tour.</p>
           </div>
           <button
             type="button"
@@ -239,7 +239,7 @@ export default function TourForm({ initial, onSave, password }: Props) {
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">Precio por persona (USD)</label>
+              <label className="block text-xs font-medium text-gray-700 mb-1">Precio total por persona (USD)</label>
               <input
                 type="number"
                 min={0}

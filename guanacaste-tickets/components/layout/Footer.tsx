@@ -1,13 +1,24 @@
 import Link from 'next/link';
 import { WHATSAPP_NUMBER } from '@/lib/config';
+import { CATEGORIES } from '@/lib/data/categories';
+import { PLACES } from '@/lib/data/places';
+import { getAllToursFromDB } from '@/lib/data/tours-db';
 
-export default function Footer() {
+export default async function Footer() {
+  const tours = await getAllToursFromDB();
+  const activeCategories = CATEGORIES.filter((c) => tours.some((t) => t.category === c));
+  const toursLinks = [
+    { label: 'All Tours', href: '/tours' },
+    ...activeCategories.map((c) => ({ label: c, href: `/tours?category=${encodeURIComponent(c)}` })),
+  ];
+  const placesLinks = PLACES.map((p) => ({ label: p.name, href: `/places/${p.slug}` }));
+
   return (
     <footer className="bg-secondary text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-8">
           {/* Brand */}
-          <div>
+          <div className="col-span-2 sm:col-span-3 lg:col-span-1">
             <div className="mb-4">
               <img
                 src="/logo-footer.svg"
@@ -18,6 +29,38 @@ export default function Footer() {
             <p className="text-green-200 text-sm leading-relaxed">
               Your trusted source for tours and experiences in Guanacaste, Costa Rica.
             </p>
+          </div>
+
+          {/* Tours */}
+          <div>
+            <h3 className="font-heading font-semibold text-sm uppercase tracking-wider text-green-300 mb-3">
+              Tours
+            </h3>
+            <ul className="space-y-2 text-sm">
+              {toursLinks.map((item) => (
+                <li key={item.href}>
+                  <Link href={item.href} className="text-green-200 hover:text-white transition-colors">
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Places */}
+          <div>
+            <h3 className="font-heading font-semibold text-sm uppercase tracking-wider text-green-300 mb-3">
+              Places
+            </h3>
+            <ul className="space-y-2 text-sm">
+              {placesLinks.map((item) => (
+                <li key={item.href}>
+                  <Link href={item.href} className="text-green-200 hover:text-white transition-colors">
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
 
           {/* Links */}

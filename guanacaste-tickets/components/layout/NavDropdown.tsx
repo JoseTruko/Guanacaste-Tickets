@@ -14,6 +14,7 @@ type Props = {
 export default function NavDropdown({ label, items, isActive }: Props) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const closeTimeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   useEffect(() => {
     if (!open) return;
@@ -33,8 +34,19 @@ export default function NavDropdown({ label, items, isActive }: Props) {
     };
   }, [open]);
 
+  useEffect(() => () => clearTimeout(closeTimeout.current), []);
+
+  const handleMouseEnter = () => {
+    clearTimeout(closeTimeout.current);
+    setOpen(true);
+  };
+
+  const handleMouseLeave = () => {
+    closeTimeout.current = setTimeout(() => setOpen(false), 150);
+  };
+
   return (
-    <div ref={ref} className="relative">
+    <div ref={ref} className="relative" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}

@@ -7,14 +7,10 @@ import { WHATSAPP_NUMBER } from '@/lib/config';
 import { CATEGORIES } from '@/lib/data/categories';
 import { PLACES } from '@/lib/data/places';
 import { useScrollDirection } from '@/hooks/useScrollDirection';
+import { useCartStore } from '@/store/cart';
 import NavDropdown from './NavDropdown';
 
 const navLinks = [{ label: 'Home', href: '/' }];
-
-const toursDropdownItems = [
-  { label: 'All Tours', href: '/tours' },
-  ...CATEGORIES.map((c) => ({ label: c, href: `/tours?category=${encodeURIComponent(c)}` })),
-];
 
 const placesDropdownItems = PLACES.map((p) => ({ label: p.name, href: `/places/${p.slug}` }));
 
@@ -22,8 +18,31 @@ export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [mobileToursOpen, setMobileToursOpen] = useState(false);
   const [mobilePlacesOpen, setMobilePlacesOpen] = useState(false);
+  const [cartMounted, setCartMounted] = useState(false);
+  const [activeCategories, setActiveCategories] = useState<string[]>([]);
   const pathname = usePathname();
   const hidden = useScrollDirection();
+  const cartCount = useCartStore((s) => s.items.length);
+
+  useEffect(() => {
+    useCartStore.persist.rehydrate();
+    setCartMounted(true);
+  }, []);
+
+  useEffect(() => {
+    fetch('/api/tours')
+      .then((res) => res.json())
+      .then((tours: { category: string }[]) => {
+        const present = new Set(tours.map((t) => t.category));
+        setActiveCategories(CATEGORIES.filter((c) => present.has(c)));
+      })
+      .catch(() => {});
+  }, []);
+
+  const toursDropdownItems = [
+    { label: 'All Tours', href: '/tours' },
+    ...activeCategories.map((c) => ({ label: c, href: `/tours?category=${encodeURIComponent(c)}` })),
+  ];
 
   const isActive = (href: string) => {
     if (href === '/') return pathname === '/';
@@ -84,6 +103,20 @@ export default function Header() {
 
           {/* Desktop action */}
           <div className="hidden md:flex items-center gap-3">
+            {cartMounted && cartCount > 0 && (
+              <Link
+                href="/checkout"
+                aria-label={`View cart, ${cartCount} item${cartCount !== 1 ? 's' : ''}`}
+                className="relative p-2 text-gray-700 hover:text-primary transition-colors"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.29 2.29c-.63.63-.184 1.71.71 1.71H17m-10 0a2 2 0 100 4 2 2 0 000-4zm10 0a2 2 0 100 4 2 2 0 000-4z" />
+                </svg>
+                <span className="absolute -top-0.5 -right-0.5 bg-primary text-white text-[10px] leading-none rounded-full h-4 w-4 flex items-center justify-center font-semibold">
+                  {cartCount}
+                </span>
+              </Link>
+            )}
             <Link
               href="/tours"
               className="inline-flex items-center justify-center bg-primary text-white px-5 py-2 border border-primary rounded-sm font-semibold text-sm hover:bg-primary-hover transition-colors"
@@ -94,6 +127,20 @@ export default function Header() {
 
           {/* Mobile: hamburger */}
           <div className="flex md:hidden items-center gap-2">
+            {cartMounted && cartCount > 0 && (
+              <Link
+                href="/checkout"
+                aria-label={`View cart, ${cartCount} item${cartCount !== 1 ? 's' : ''}`}
+                className="relative p-2 text-gray-700 hover:text-primary transition-colors"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.29 2.29c-.63.63-.184 1.71.71 1.71H17m-10 0a2 2 0 100 4 2 2 0 000-4zm10 0a2 2 0 100 4 2 2 0 000-4z" />
+                </svg>
+                <span className="absolute -top-0.5 -right-0.5 bg-primary text-white text-[10px] leading-none rounded-full h-4 w-4 flex items-center justify-center font-semibold">
+                  {cartCount}
+                </span>
+              </Link>
+            )}
             <Link
               href="/tours"
               className="inline-flex items-center justify-center bg-primary text-white px-4 py-2 border border-primary rounded-sm font-semibold text-sm hover:bg-primary-hover transition-colors"

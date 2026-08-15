@@ -20,6 +20,8 @@ function buildAdminHtml(summary: BookingSummary): string {
     <h2 style="color:#0077B6">Nueva reserva — Guanacaste Tickets</h2>
     <p><strong>Cliente:</strong> ${summary.customerName}</p>
     <p><strong>Email:</strong> <a href="mailto:${summary.customerEmail}">${summary.customerEmail}</a></p>
+    ${summary.customerPhone ? `<p><strong>Teléfono:</strong> ${summary.customerPhone}</p>` : ''}
+    ${summary.customerLanguage ? `<p><strong>Idioma:</strong> ${summary.customerLanguage}</p>` : ''}
     ${summary.gclid ? `<p><strong>Origen:</strong> Google Ads (gclid: ${summary.gclid})</p>` : ''}
     <table style="border-collapse:collapse;width:100%;margin-top:16px;font-size:14px">
       <thead>

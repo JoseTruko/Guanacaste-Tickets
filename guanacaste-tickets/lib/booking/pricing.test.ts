@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { calculateSubtotal, calculateTotalPrice, calculateGrandTotal, calculateTransportCost } from './pricing';
-import type { BookingItem, TransportZone } from '@/types/index';
+import { calculateSubtotal, calculateTotalPrice, calculateGrandTotal, getTourPricing, calculateBookingTotal } from './pricing';
+import type { BookingItem, Tour, TransportZone } from '@/types/index';
 
 const makeItem = (adults: number, children: number, adultPrice: number, childPrice: number): BookingItem => ({
   tourId: 'tour-1',
@@ -55,24 +55,30 @@ describe('calculateGrandTotal', () => {
   });
 });
 
-describe('calculateTransportCost', () => {
+describe('transport zone pricing', () => {
+  const tour: Tour = {
+    id: 'tour-1', slug: 'test-tour', title: 'Test Tour', description: '', shortDescription: '',
+    price: 100, childPrice: 60, currency: 'USD', duration: 4, category: 'Adventure', difficulty: 'Easy',
+    languages: [], minGroupSize: 1, images: [], featured: false, included: [], notIncluded: [],
+    meetingPoint: '', whatToBring: [], faqs: [], cancellationPolicy: { description: '', freeCancellation: true },
+  };
   const zone: TransportZone = {
     id: 'zone-1',
     name: 'Zone 1',
     description: 'Playas Hermosa, El Coco',
-    pricePerPerson: 10,
+    pricePerPerson: 160,
     included: ['Round trip pickup'],
   };
 
-  it('returns 0 when no zone is selected', () => {
-    expect(calculateTransportCost(undefined, 2, 1)).toBe(0);
+  it('getTourPricing uses the base tour price when no zone is selected', () => {
+    expect(getTourPricing(tour, 2)).toEqual({ adultPrice: 100, childPrice: 60 });
   });
 
-  it('multiplies price per person by total participants', () => {
-    expect(calculateTransportCost(zone, 2, 1)).toBe(30);
+  it('getTourPricing replaces the tour price with the zone price (not additive)', () => {
+    expect(getTourPricing(tour, 2, zone)).toEqual({ adultPrice: 160, childPrice: 160 });
   });
 
-  it('returns 0 when there are no participants', () => {
-    expect(calculateTransportCost(zone, 0, 0)).toBe(0);
+  it('calculateBookingTotal uses the zone price for all participants, not tour price + zone price', () => {
+    expect(calculateBookingTotal(tour, 2, 1, zone)).toBe(3 * 160);
   });
 });

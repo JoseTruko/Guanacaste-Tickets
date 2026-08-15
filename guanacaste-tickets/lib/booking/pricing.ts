@@ -23,7 +23,11 @@ export function calculateSubtotal(
 /** Alias for calculateSubtotal */
 export const calculateTotalPrice = calculateSubtotal;
 
-export function getTourPricing(tour: Tour, totalParticipants: number): UnitPrices {
+export function getTourPricing(tour: Tour, totalParticipants: number, zone?: TransportZone): UnitPrices {
+  if (zone) {
+    return { adultPrice: zone.pricePerPerson, childPrice: zone.pricePerPerson };
+  }
+
   if (!tour.pricingBrackets?.length) {
     return { adultPrice: tour.price, childPrice: tour.childPrice };
   }
@@ -49,9 +53,9 @@ export function getFromPrice(tour: Tour): number {
   return Math.min(...prices);
 }
 
-export function calculateBookingTotal(tour: Tour, adults: number, children: number): number {
+export function calculateBookingTotal(tour: Tour, adults: number, children: number, zone?: TransportZone): number {
   const participants = adults + children;
-  const pricing = getTourPricing(tour, participants);
+  const pricing = getTourPricing(tour, participants, zone);
   return calculateSubtotal(adults, children, pricing.adultPrice, pricing.childPrice);
 }
 
@@ -60,16 +64,4 @@ export function calculateBookingTotal(tour: Tour, adults: number, children: numb
  */
 export function calculateGrandTotal(items: BookingItem[]): number {
   return items.reduce((sum, item) => sum + item.subtotal, 0);
-}
-
-/**
- * Cost of an optional transport zone, charged per person.
- */
-export function calculateTransportCost(
-  zone: TransportZone | undefined,
-  adults: number,
-  children: number,
-): number {
-  if (!zone) return 0;
-  return (adults + children) * zone.pricePerPerson;
 }

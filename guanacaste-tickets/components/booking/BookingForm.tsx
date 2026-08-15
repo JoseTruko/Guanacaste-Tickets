@@ -6,9 +6,8 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import type { Tour } from '@/types/index';
-import { calculateBookingTotal, calculateTransportCost, getTourPricing } from '@/lib/booking/pricing';
-import { paymentGateway } from '@/lib/payment';
-import { getStoredGclid } from '@/lib/analytics';
+import { calculateBookingTotal, getTourPricing } from '@/lib/booking/pricing';
+import { useCartStore } from '@/store/cart';
 import ParticipantSelector from './ParticipantSelector';
 import TransportZoneSelector from './TransportZoneSelector';
 
@@ -21,8 +20,6 @@ const schema = z.object({
     .string()
     .min(1, 'Date is required')
     .refine((d) => d >= todayStr(), { message: 'Date cannot be in the past' }),
-  name: z.string().min(1, 'Name is required'),
-  email: z.string().min(1, 'Email is required').email('Invalid email address'),
 });
 
 type FormValues = z.infer<typeof schema>;
@@ -33,8 +30,8 @@ type BookingFormProps = {
 
 export default function BookingForm({ tour }: BookingFormProps) {
   const router = useRouter();
+  const addItem = useCartStore((s) => s.addItem);
   const [bookLoading, setBookLoading] = useState(false);
-  const [errorMsg, setErrorMsg] = useState('');
   const [transportZoneId, setTransportZoneId] = useState<string | null>(null);
 
   const {
@@ -45,58 +42,39 @@ export default function BookingForm({ tour }: BookingFormProps) {
     formState: { errors },
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
-    defaultValues: { adults: 1, children: 0, date: '', name: '', email: '' },
+    defaultValues: { adults: 1, children: 0, date: '' },
   });
 
   const adults = watch('adults');
   const children = watch('children');
   const totalParticipants = adults + children;
-  const pricing = getTourPricing(tour, totalParticipants);
   const selectedZone = tour.transportZones?.find((z) => z.id === transportZoneId);
-  const transportCost = calculateTransportCost(selectedZone, adults, children);
-  const total = calculateBookingTotal(tour, adults, children) + transportCost;
+  const pricing = getTourPricing(tour, totalParticipants, selectedZone);
+  const total = calculateBookingTotal(tour, adults, children, selectedZone);
   const minGroupNotReached = totalParticipants < tour.minGroupSize;
 
-  const onBookNow = async (values: FormValues) => {
+  const onAddToCart = (values: FormValues) => {
     setBookLoading(true);
-    setErrorMsg('');
     const totalParticipants = values.adults + values.children;
-    if (totalParticipants < tour.minGroupSize) {
-      setErrorMsg(`Minimum ${tour.minGroupSize} people required to book this tour.`);
-      setBookLoading(false);
-      return;
-    }
 
-    const bracketPricing = getTourPricing(tour, totalParticipants);
-    const tourSubtotal = calculateBookingTotal(tour, values.adults, values.children);
     const zone = tour.transportZones?.find((z) => z.id === transportZoneId);
-    const transportSubtotal = calculateTransportCost(zone, values.adults, values.children);
-    const subtotal = tourSubtotal + transportSubtotal;
-    const result = await paymentGateway.processBooking({
-      items: [{
-        tourId: tour.id,
-        tourTitle: tour.title,
-        tourSlug: tour.slug,
-        date: values.date,
-        adults: values.adults,
-        children: values.children,
-        adultPrice: bracketPricing.adultPrice,
-        childPrice: bracketPricing.childPrice,
-        ...(zone ? { transportZone: { id: zone.id, name: zone.name, pricePerPerson: zone.pricePerPerson }, transportSubtotal } : {}),
-        subtotal,
-      }],
-      grandTotal: subtotal,
-      currency: 'USD',
-      customerName: values.name,
-      customerEmail: values.email,
-      gclid: getStoredGclid(),
+    const bracketPricing = getTourPricing(tour, totalParticipants, zone);
+    const subtotal = calculateBookingTotal(tour, values.adults, values.children, zone);
+
+    addItem({
+      tourId: tour.id,
+      tourTitle: tour.title,
+      tourSlug: tour.slug,
+      date: values.date,
+      adults: values.adults,
+      children: values.children,
+      adultPrice: bracketPricing.adultPrice,
+      childPrice: bracketPricing.childPrice,
+      ...(zone ? { transportZone: { id: zone.id, name: zone.name } } : {}),
+      subtotal,
     });
-    setBookLoading(false);
-    if (result.success) {
-      router.push(`/booking-confirmed?tour=${encodeURIComponent(tour.title)}&value=${subtotal}`);
-    } else {
-      setErrorMsg(result.message || 'Something went wrong. Please try again.');
-    }
+
+    router.push('/checkout');
   };
 
   return (
@@ -117,69 +95,43 @@ export default function BookingForm({ tour }: BookingFormProps) {
         )}
       </div>
 
-      {/* Transport zones */}
-      {tour.transportZones && tour.transportZones.length > 0 && (
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Transporte</label>
-          <TransportZoneSelector
-            zones={tour.transportZones}
-            participants={totalParticipants}
-            selectedId={transportZoneId}
-            onChange={setTransportZoneId}
-          />
-        </div>
+      {minGroupNotReached ? (
+        <p className="text-sm text-center font-medium text-orange-600 bg-orange-50 border border-orange-200 rounded-md p-3">
+          You need to select at least {tour.minGroupSize} participant{tour.minGroupSize !== 1 ? 's' : ''}.
+        </p>
+      ) : (
+        <>
+          {/* Transport zones */}
+          {tour.transportZones && tour.transportZones.length > 0 && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Transportation</label>
+              <TransportZoneSelector
+                zones={tour.transportZones}
+                participants={totalParticipants}
+                selectedId={transportZoneId}
+                onChange={setTransportZoneId}
+              />
+            </div>
+          )}
+
+          {/* Date */}
+          <div>
+            <label htmlFor="date" className="block text-sm font-medium text-gray-700 mb-1">
+              Date
+            </label>
+            <input
+              id="date"
+              type="date"
+              min={todayStr()}
+              {...register('date')}
+              className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+            />
+            {errors.date && (
+              <p className="mt-1 text-xs text-red-600">{errors.date.message}</p>
+            )}
+          </div>
+        </>
       )}
-
-      {/* Date */}
-      <div>
-        <label htmlFor="date" className="block text-sm font-medium text-gray-700 mb-1">
-          Date
-        </label>
-        <input
-          id="date"
-          type="date"
-          min={todayStr()}
-          {...register('date')}
-          className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-        />
-        {errors.date && (
-          <p className="mt-1 text-xs text-red-600">{errors.date.message}</p>
-        )}
-      </div>
-
-      {/* Name */}
-      <div>
-        <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-          Full Name
-        </label>
-        <input
-          id="name"
-          type="text"
-          placeholder="Jane Doe"
-          {...register('name')}
-          className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-        />
-        {errors.name && (
-          <p className="mt-1 text-xs text-red-600">{errors.name.message}</p>
-        )}
-      </div>
-
-      {/* Email */}
-      <div>
-        <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-          Email
-        </label>
-        <input
-          id="email"
-          type="email"
-          placeholder="jane@example.com"
-          {...register('email')}
-          className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-        />
-        {errors.email && (
-          <p className="mt-1 text-xs text-red-600">{errors.email.message}</p>
-        )}
-      </div>
 
       {/* Price summary */}
       <div className="bg-gray-50 rounded-md p-3 text-sm space-y-1">
@@ -193,34 +145,20 @@ export default function BookingForm({ tour }: BookingFormProps) {
             <span>${(children * pricing.childPrice).toFixed(2)}</span>
           </div>
         )}
-        {selectedZone && (
-          <div className="flex justify-between text-gray-600">
-            <span>Transporte: {selectedZone.name}</span>
-            <span>${transportCost.toFixed(2)}</span>
-          </div>
-        )}
         <div className="flex justify-between font-semibold text-gray-900 border-t border-gray-200 pt-1 mt-1">
           <span>Total</span>
           <span>${total.toFixed(2)} USD</span>
         </div>
       </div>
 
-      {minGroupNotReached && (
-        <p className="text-sm text-center font-medium text-orange-600">
-          Add {tour.minGroupSize - totalParticipants} more participant{tour.minGroupSize - totalParticipants !== 1 ? 's' : ''} to meet the minimum group size.
-        </p>
-      )}
       <button
         type="button"
-        onClick={handleSubmit(onBookNow)}
+        onClick={handleSubmit(onAddToCart)}
         disabled={bookLoading || minGroupNotReached}
         className="w-full bg-primary text-white font-semibold py-2.5 rounded-md hover:bg-primary-hover transition-colors disabled:opacity-50"
       >
-        {bookLoading ? 'Processing…' : 'Book Now'}
+        Add to Cart
       </button>
-      {errorMsg && (
-        <p className="text-sm text-center font-medium text-red-600">{errorMsg}</p>
-      )}
     </form>
   );
 }

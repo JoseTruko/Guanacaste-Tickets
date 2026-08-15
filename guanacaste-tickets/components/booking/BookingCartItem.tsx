@@ -31,7 +31,7 @@ export default function BookingCartItem({ item }: BookingCartItemProps) {
         </p>
         {item.transportZone && (
           <p className="text-xs text-gray-600">
-            Transport: {item.transportZone.name} — ${(item.transportSubtotal ?? 0).toFixed(2)}
+            Pickup: {item.transportZone.name}
           </p>
         )}
         <p className="text-sm font-semibold text-gray-900">${item.subtotal.toFixed(2)} USD</p>

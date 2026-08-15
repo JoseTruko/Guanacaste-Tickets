@@ -19,7 +19,7 @@ export default function TransportZoneSelector({ zones, participants, selectedId,
           selectedId === null ? 'border-primary bg-primary/5' : 'border-gray-200 hover:border-gray-300'
         }`}
       >
-        <span className="text-sm font-medium text-gray-900">Sin transporte</span>
+        <span className="text-sm font-medium text-gray-900">No transportation</span>
       </button>
 
       {zones.map((zone) => {
@@ -35,13 +35,19 @@ export default function TransportZoneSelector({ zones, participants, selectedId,
             }`}
           >
             <div className="flex items-start justify-between gap-3">
-              <div>
-                <span className="text-sm font-medium text-gray-900">{zone.name}</span>
-                {zone.description && (
-                  <p className="text-xs text-gray-500 mt-0.5">{zone.description}</p>
-                )}
+              <span className="text-sm font-medium text-gray-900">{zone.name}</span>
+              {!isSelected && (
+                <span className="text-xs text-gray-500 shrink-0">${zone.pricePerPerson.toFixed(2)}/person</span>
+              )}
+            </div>
+            {zone.description && (
+              <p className="text-xs text-gray-500 mt-0.5">{zone.description}</p>
+            )}
+
+            {isSelected && (
+              <div className="mt-2 pt-2 border-t border-gray-200 flex items-start justify-between gap-3">
                 {zone.included.length > 0 && (
-                  <ul className="mt-1.5 space-y-0.5">
+                  <ul className="space-y-0.5">
                     {zone.included.map((item, i) => (
                       <li key={i} className="text-xs text-gray-600 flex items-start gap-1">
                         <span className="text-green-600">✓</span>
@@ -50,12 +56,12 @@ export default function TransportZoneSelector({ zones, participants, selectedId,
                     ))}
                   </ul>
                 )}
+                <div className="text-right shrink-0 ml-auto">
+                  <span className="text-sm font-semibold text-gray-900">${zoneTotal.toFixed(2)}</span>
+                  <p className="text-xs text-gray-500">${zone.pricePerPerson.toFixed(2)}/person</p>
+                </div>
               </div>
-              <div className="text-right shrink-0">
-                <span className="text-sm font-semibold text-gray-900">${zoneTotal.toFixed(2)}</span>
-                <p className="text-xs text-gray-500">${zone.pricePerPerson.toFixed(2)}/persona</p>
-              </div>
-            </div>
+            )}
           </button>
         );
       })}

@@ -72,8 +72,7 @@ export interface BookingItem {
   children: number;
   adultPrice: number;
   childPrice: number;
-  transportZone?: { id: string; name: string; pricePerPerson: number };
-  transportSubtotal?: number;
+  transportZone?: { id: string; name: string };
   subtotal: number;
 }
 
@@ -83,6 +82,10 @@ export interface BookingSummary {
   currency: 'USD';
   customerName: string;
   customerEmail: string;
+  customerFirstName?: string;
+  customerLastName?: string;
+  customerPhone?: string;
+  customerLanguage?: string;
   gclid?: string;
 }
 

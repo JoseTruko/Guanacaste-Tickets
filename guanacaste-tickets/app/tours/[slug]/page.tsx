@@ -70,9 +70,9 @@ export default async function TourPage({ params }: PageProps) {
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div className="lg:grid lg:grid-cols-3 lg:gap-10">
+        <div className="md:grid md:grid-cols-3 md:gap-10">
           {/* Left column — main content */}
-          <div className="lg:col-span-2 space-y-8">
+          <div className="md:col-span-2 space-y-8">
             {/* Gallery */}
             <TourGallery images={tour.images} tourTitle={tour.title} />
 
@@ -209,9 +209,9 @@ export default async function TourPage({ params }: PageProps) {
             </div>
           </div>
 
-          {/* Right column — sticky booking form */}
-          <div className="mt-10 lg:mt-0">
-            <div className="lg:sticky lg:top-6 bg-white border border-gray-200 rounded-2xl shadow-md p-6">
+          {/* Right column — booking form */}
+          <div className="mt-10 md:mt-0">
+            <div className="bg-white border border-gray-200 rounded-2xl shadow-md p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Book this tour</h2>
               <BookingForm tour={tour} />
             </div>
