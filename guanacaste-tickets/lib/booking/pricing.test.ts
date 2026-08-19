@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { calculateSubtotal, calculateTotalPrice, calculateGrandTotal, getTourPricing, calculateBookingTotal } from './pricing';
+import { calculateSubtotal, calculateTotalPrice, calculateGrandTotal, getTourPricing, calculateBookingTotal, getFromPrice } from './pricing';
 import type { BookingItem, Tour, TransportZone } from '@/types/index';
 
 const makeItem = (adults: number, children: number, adultPrice: number, childPrice: number): BookingItem => ({
@@ -80,5 +80,28 @@ describe('transport zone pricing', () => {
 
   it('calculateBookingTotal uses the zone price for all participants, not tour price + zone price', () => {
     expect(calculateBookingTotal(tour, 2, 1, zone)).toBe(3 * 160);
+  });
+
+  it('getTourPricing uses a distinct child price when the zone defines one', () => {
+    const zoneWithChildPrice: TransportZone = { ...zone, childPricePerPerson: 90 };
+    expect(getTourPricing(tour, 3, zoneWithChildPrice)).toEqual({ adultPrice: 160, childPrice: 90 });
+  });
+
+  it('calculateBookingTotal applies the zone child price only to children', () => {
+    const zoneWithChildPrice: TransportZone = { ...zone, childPricePerPerson: 90 };
+    expect(calculateBookingTotal(tour, 2, 1, zoneWithChildPrice)).toBe(2 * 160 + 1 * 90);
+  });
+
+  it('getFromPrice ignores zones when transport is optional', () => {
+    expect(getFromPrice({ ...tour, transportZones: [zone] })).toBe(100);
+  });
+
+  it('getFromPrice uses the cheapest zone when transport is required', () => {
+    const cheaperZone: TransportZone = { ...zone, id: 'zone-2', pricePerPerson: 120 };
+    expect(getFromPrice({ ...tour, transportRequired: true, transportZones: [zone, cheaperZone] })).toBe(120);
+  });
+
+  it('getFromPrice falls back to base price when transport is required but no zones exist', () => {
+    expect(getFromPrice({ ...tour, transportRequired: true, transportZones: [] })).toBe(100);
   });
 });

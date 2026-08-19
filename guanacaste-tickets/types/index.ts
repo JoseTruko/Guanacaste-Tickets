@@ -25,6 +25,7 @@ export interface TransportZone {
   name: string;
   description: string;
   pricePerPerson: number;
+  childPricePerPerson?: number;
   included: string[];
 }
 
@@ -38,6 +39,7 @@ export interface Tour {
   childPrice: number;
   pricingBrackets?: PriceBracket[];
   transportZones?: TransportZone[];
+  transportRequired?: boolean;
   currency: 'USD';
   duration: number;
   category: TourCategory;

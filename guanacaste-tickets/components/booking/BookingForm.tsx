@@ -32,7 +32,12 @@ export default function BookingForm({ tour }: BookingFormProps) {
   const router = useRouter();
   const addItem = useCartStore((s) => s.addItem);
   const [bookLoading, setBookLoading] = useState(false);
-  const [transportZoneId, setTransportZoneId] = useState<string | null>(null);
+  const [transportZoneId, setTransportZoneId] = useState<string | null>(() => {
+    if (tour.transportRequired && tour.transportZones?.length) {
+      return tour.transportZones.reduce((cheapest, z) => (z.pricePerPerson < cheapest.pricePerPerson ? z : cheapest)).id;
+    }
+    return null;
+  });
 
   const {
     register,
@@ -107,9 +112,11 @@ export default function BookingForm({ tour }: BookingFormProps) {
               <label className="block text-sm font-medium text-gray-700 mb-1">Transportation</label>
               <TransportZoneSelector
                 zones={tour.transportZones}
-                participants={totalParticipants}
+                adults={adults}
+                children={children}
                 selectedId={transportZoneId}
                 onChange={setTransportZoneId}
+                allowNone={!tour.transportRequired}
               />
             </div>
           )}
@@ -154,7 +161,7 @@ export default function BookingForm({ tour }: BookingFormProps) {
       <button
         type="button"
         onClick={handleSubmit(onAddToCart)}
-        disabled={bookLoading || minGroupNotReached}
+        disabled={bookLoading || minGroupNotReached || (tour.transportRequired && !transportZoneId)}
         className="w-full bg-primary text-white font-semibold py-2.5 rounded-md hover:bg-primary-hover transition-colors disabled:opacity-50"
       >
         Add to Cart

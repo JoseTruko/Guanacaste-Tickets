@@ -10,7 +10,7 @@ type Props = { initial?: Tour; onSave: (t: Tour) => void; password: string };
 
 const empty: Tour = {
   id: '', slug: '', title: '', description: '', shortDescription: '',
-  price: 0, childPrice: 0, pricingBrackets: [], transportZones: [], currency: 'USD', duration: 0,
+  price: 0, childPrice: 0, pricingBrackets: [], transportZones: [], transportRequired: false, currency: 'USD', duration: 0,
   category: 'Adventure', location: undefined, difficulty: 'Easy', languages: ['English', 'Spanish'],
   minGroupSize: 10, images: [], featured: false,
   included: [], notIncluded: [], meetingPoint: '', whatToBring: [],
@@ -50,7 +50,7 @@ export default function TourForm({ initial, onSave, password }: Props) {
     set('pricingBrackets', brackets.filter((_, idx) => idx !== index));
   };
 
-  const updateTransportZone = (index: number, field: keyof NonNullable<Tour['transportZones']>[number], value: string | number | string[]) => {
+  const updateTransportZone = (index: number, field: keyof NonNullable<Tour['transportZones']>[number], value: string | number | string[] | undefined) => {
     const zones = t.transportZones ?? [];
     const next = zones.map((zone, idx) => (idx === index ? { ...zone, [field]: value } : zone));
     set('transportZones', next);
@@ -215,7 +215,7 @@ export default function TourForm({ initial, onSave, password }: Props) {
         <div className="flex items-center justify-between mb-3">
           <div>
             <h3 className="font-semibold text-gray-900">Zonas de transporte</h3>
-            <p className="text-xs text-gray-500">Extra opcional que el cliente puede elegir al reservar. El precio de cada zona es el precio final por persona (ya incluye el tour + el transporte), no se suma al precio base del tour.</p>
+            <p className="text-xs text-gray-500">El precio de cada zona es el precio final por persona (ya incluye el tour + el transporte), no se suma al precio base del tour.</p>
           </div>
           <button
             type="button"
@@ -224,6 +224,19 @@ export default function TourForm({ initial, onSave, password }: Props) {
           >
             + Agregar zona
           </button>
+        </div>
+
+        <div className="flex items-center gap-2 mb-3">
+          <input
+            type="checkbox"
+            id="transportRequired"
+            checked={t.transportRequired ?? false}
+            onChange={(e) => set('transportRequired', e.target.checked)}
+            className="w-4 h-4"
+          />
+          <label htmlFor="transportRequired" className="text-sm text-gray-700">
+            Transporte obligatorio (el tour solo se puede reservar eligiendo una zona, no se ofrece sin transporte)
+          </label>
         </div>
 
         {(t.transportZones ?? []).map((zone, index) => (
@@ -238,15 +251,28 @@ export default function TourForm({ initial, onSave, password }: Props) {
                 placeholder="Zona 1"
               />
             </div>
-            <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">Precio total por persona (USD)</label>
-              <input
-                type="number"
-                min={0}
-                value={zone.pricePerPerson}
-                onChange={(e) => updateTransportZone(index, 'pricePerPerson', Number(e.target.value))}
-                className="w-full border border-gray-300 rounded-md px-2 py-1 text-sm"
-              />
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs font-medium text-gray-700 mb-1">Precio adulto por persona (USD)</label>
+                <input
+                  type="number"
+                  min={0}
+                  value={zone.pricePerPerson}
+                  onChange={(e) => updateTransportZone(index, 'pricePerPerson', Number(e.target.value))}
+                  className="w-full border border-gray-300 rounded-md px-2 py-1 text-sm"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-700 mb-1">Precio niño por persona</label>
+                <input
+                  type="number"
+                  min={0}
+                  value={zone.childPricePerPerson ?? ''}
+                  onChange={(e) => updateTransportZone(index, 'childPricePerPerson', e.target.value ? Number(e.target.value) : undefined)}
+                  className="w-full border border-gray-300 rounded-md px-2 py-1 text-sm"
+                  placeholder="Igual al adulto"
+                />
+              </div>
             </div>
             <div className="sm:col-span-2">
               <label className="block text-xs font-medium text-gray-700 mb-1">Descripción</label>

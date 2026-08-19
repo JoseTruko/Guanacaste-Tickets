@@ -21,7 +21,8 @@ export async function POST(req: Request) {
   const body = await req.json();
   let includePricingBrackets = true;
   let includeTransportZones = true;
-  let payload = tourToDb(body, includePricingBrackets, includeTransportZones);
+  let includeTransportRequired = true;
+  let payload = tourToDb(body, includePricingBrackets, includeTransportZones, includeTransportRequired);
   let { data, error } = await supabaseAdmin
     .from('tours')
     .insert(payload)
@@ -30,13 +31,19 @@ export async function POST(req: Request) {
 
   if (error && isMissingPricingBracketsColumnError(error)) {
     includePricingBrackets = false;
-    payload = tourToDb(body, includePricingBrackets, includeTransportZones);
+    payload = tourToDb(body, includePricingBrackets, includeTransportZones, includeTransportRequired);
     ({ data, error } = await supabaseAdmin.from('tours').insert(payload).select().single());
   }
 
   if (error && isMissingTransportZonesColumnError(error)) {
     includeTransportZones = false;
-    payload = tourToDb(body, includePricingBrackets, includeTransportZones);
+    payload = tourToDb(body, includePricingBrackets, includeTransportZones, includeTransportRequired);
+    ({ data, error } = await supabaseAdmin.from('tours').insert(payload).select().single());
+  }
+
+  if (error && isMissingTransportRequiredColumnError(error)) {
+    includeTransportRequired = false;
+    payload = tourToDb(body, includePricingBrackets, includeTransportZones, includeTransportRequired);
     ({ data, error } = await supabaseAdmin.from('tours').insert(payload).select().single());
   }
 
@@ -54,11 +61,15 @@ export function isMissingTransportZonesColumnError(error: any) {
   return typeof error?.message === 'string' && error.message.includes('transport_zones');
 }
 
+export function isMissingTransportRequiredColumnError(error: any) {
+  return typeof error?.message === 'string' && error.message.includes('transport_required');
+}
+
 function isAdmin(req: Request) {
   return req.headers.get('x-admin-password') === process.env.ADMIN_PASSWORD;
 }
 
-export function tourToDb(t: Tour, includePricingBrackets = true, includeTransportZones = true) {
+export function tourToDb(t: Tour, includePricingBrackets = true, includeTransportZones = true, includeTransportRequired = true) {
   const id = typeof t.id === 'string' && t.id.trim() ? t.id : `tour-${Date.now()}`;
   const slug = typeof t.slug === 'string' && t.slug.trim()
     ? t.slug
@@ -97,6 +108,10 @@ export function tourToDb(t: Tour, includePricingBrackets = true, includeTranspor
     payload.transport_zones = t.transportZones;
   }
 
+  if (includeTransportRequired) {
+    payload.transport_required = t.transportRequired ?? false;
+  }
+
   return payload;
 }
 
@@ -119,6 +134,7 @@ export function dbToTour(r: any): Tour {
     minGroupSize: r.max_group_size,
     pricingBrackets: r.pricing_brackets ?? [],
     transportZones: r.transport_zones ?? [],
+    transportRequired: r.transport_required ?? false,
     images: r.images,
     featured: r.featured,
     included: r.included,

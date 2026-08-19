@@ -25,7 +25,7 @@ export const calculateTotalPrice = calculateSubtotal;
 
 export function getTourPricing(tour: Tour, totalParticipants: number, zone?: TransportZone): UnitPrices {
   if (zone) {
-    return { adultPrice: zone.pricePerPerson, childPrice: zone.pricePerPerson };
+    return { adultPrice: zone.pricePerPerson, childPrice: zone.childPricePerPerson ?? zone.pricePerPerson };
   }
 
   if (!tour.pricingBrackets?.length) {
@@ -46,9 +46,13 @@ export function getTourPricing(tour: Tour, totalParticipants: number, zone?: Tra
 }
 
 /**
- * Cheapest adult price across the base price and all pricing brackets.
+ * Cheapest adult price the tour can be booked at. When transport is required,
+ * the tour can only be booked through a zone, so the base price/brackets are ignored.
  */
 export function getFromPrice(tour: Tour): number {
+  if (tour.transportRequired && tour.transportZones?.length) {
+    return Math.min(...tour.transportZones.map((zone) => zone.pricePerPerson));
+  }
   const prices = [tour.price, ...(tour.pricingBrackets?.map((bracket) => bracket.adultPrice) ?? [])];
   return Math.min(...prices);
 }

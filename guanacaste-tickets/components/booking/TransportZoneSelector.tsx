@@ -4,27 +4,33 @@ import type { TransportZone } from '@/types/index';
 
 type Props = {
   zones: TransportZone[];
-  participants: number;
+  adults: number;
+  children: number;
   selectedId: string | null;
   onChange: (id: string | null) => void;
+  allowNone: boolean;
 };
 
-export default function TransportZoneSelector({ zones, participants, selectedId, onChange }: Props) {
+export default function TransportZoneSelector({ zones, adults, children, selectedId, onChange, allowNone }: Props) {
   return (
     <div className="space-y-2">
-      <button
-        type="button"
-        onClick={() => onChange(null)}
-        className={`w-full text-left border rounded-lg p-3 transition-colors ${
-          selectedId === null ? 'border-primary bg-primary/5' : 'border-gray-200 hover:border-gray-300'
-        }`}
-      >
-        <span className="text-sm font-medium text-gray-900">No transportation</span>
-      </button>
+      {allowNone && (
+        <button
+          type="button"
+          onClick={() => onChange(null)}
+          className={`w-full text-left border rounded-lg p-3 transition-colors ${
+            selectedId === null ? 'border-primary bg-primary/5' : 'border-gray-200 hover:border-gray-300'
+          }`}
+        >
+          <span className="text-sm font-medium text-gray-900">No transportation</span>
+        </button>
+      )}
 
       {zones.map((zone) => {
         const isSelected = selectedId === zone.id;
-        const zoneTotal = zone.pricePerPerson * participants;
+        const childPrice = zone.childPricePerPerson ?? zone.pricePerPerson;
+        const hasDistinctChildPrice = zone.childPricePerPerson != null && zone.childPricePerPerson !== zone.pricePerPerson;
+        const zoneTotal = adults * zone.pricePerPerson + children * childPrice;
         return (
           <button
             key={zone.id}
@@ -58,7 +64,11 @@ export default function TransportZoneSelector({ zones, participants, selectedId,
                 )}
                 <div className="text-right shrink-0 ml-auto">
                   <span className="text-sm font-semibold text-gray-900">${zoneTotal.toFixed(2)}</span>
-                  <p className="text-xs text-gray-500">${zone.pricePerPerson.toFixed(2)}/person</p>
+                  {hasDistinctChildPrice ? (
+                    <p className="text-xs text-gray-500">${zone.pricePerPerson.toFixed(2)}/adult · ${childPrice.toFixed(2)}/child</p>
+                  ) : (
+                    <p className="text-xs text-gray-500">${zone.pricePerPerson.toFixed(2)}/person</p>
+                  )}
                 </div>
               </div>
             )}

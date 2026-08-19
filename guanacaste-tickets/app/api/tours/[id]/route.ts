@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase/client';
-import { dbToTour, tourToDb, isMissingPricingBracketsColumnError, isMissingTransportZonesColumnError } from '../route';
+import { dbToTour, tourToDb, isMissingPricingBracketsColumnError, isMissingTransportZonesColumnError, isMissingTransportRequiredColumnError } from '../route';
 import type { Tour } from '@/types/index';
 
 type Params = { params: Promise<{ id: string }> };
@@ -28,6 +28,7 @@ export async function PUT(req: Request, { params }: Params) {
     child_price: body.childPrice,
     pricing_brackets: body.pricingBrackets,
     transport_zones: body.transportZones,
+    transport_required: body.transportRequired ?? false,
     duration: body.duration,
     category: body.category,
     location: body.location,
@@ -54,16 +55,23 @@ export async function PUT(req: Request, { params }: Params) {
 
   let includePricingBrackets = true;
   let includeTransportZones = true;
+  let includeTransportRequired = true;
 
   if (error && isMissingPricingBracketsColumnError(error)) {
     includePricingBrackets = false;
-    payload = tourToDb(body, includePricingBrackets, includeTransportZones);
+    payload = tourToDb(body, includePricingBrackets, includeTransportZones, includeTransportRequired);
     ({ data, error } = await supabaseAdmin.from('tours').update(payload).eq('id', id).select().single());
   }
 
   if (error && isMissingTransportZonesColumnError(error)) {
     includeTransportZones = false;
-    payload = tourToDb(body, includePricingBrackets, includeTransportZones);
+    payload = tourToDb(body, includePricingBrackets, includeTransportZones, includeTransportRequired);
+    ({ data, error } = await supabaseAdmin.from('tours').update(payload).eq('id', id).select().single());
+  }
+
+  if (error && isMissingTransportRequiredColumnError(error)) {
+    includeTransportRequired = false;
+    payload = tourToDb(body, includePricingBrackets, includeTransportZones, includeTransportRequired);
     ({ data, error } = await supabaseAdmin.from('tours').update(payload).eq('id', id).select().single());
   }
 
