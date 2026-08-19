@@ -22,14 +22,12 @@ export default async function DealsSection() {
     .slice(0, CATEGORIES_TO_SHOW);
 
   return (
-    <section id="deals" className="py-16 px-4 bg-bg">
+    <section id="deals" className="py-10 md:py-16 px-4 bg-bg">
       <div className="max-w-7xl mx-auto">
         <Reveal>
-          <h2 className="font-heading font-bold text-3xl md:text-4xl text-gray-900 mb-2 text-center">
+          <h2 className="font-heading font-bold text-3xl md:text-4xl text-gray-900 mb-8 text-center">
             Top-Rated Tours
           </h2>
-          <p className="text-center text-neutral mb-10">
-          </p>
         </Reveal>
 
         {categories.length === 0 ? (

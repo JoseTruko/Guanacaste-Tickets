@@ -24,7 +24,7 @@ export default function ToursHero({
   showSearch = true,
 }: Props) {
   return (
-    <section className="relative flex items-center overflow-hidden" style={{ height: 'clamp(320px, 42vh, 440px)' }}>
+    <section className="relative flex items-center overflow-hidden" style={{ height: 'clamp(220px, 32vh, 440px)' }}>
 
       {/* Image */}
       <div className="absolute inset-0">
@@ -36,7 +36,7 @@ export default function ToursHero({
 
       {/* Content */}
       <div className="relative z-20 w-full max-w-3xl mx-auto px-4 text-center flex flex-col items-center gap-4">
-        <h1 className="font-heading font-bold text-white text-3xl md:text-4xl leading-tight">
+        <h1 className="font-heading font-bold text-white text-2xl sm:text-3xl md:text-4xl leading-tight">
           {title}
         </h1>
         <p className="text-white/85 text-sm md:text-base max-w-xl">

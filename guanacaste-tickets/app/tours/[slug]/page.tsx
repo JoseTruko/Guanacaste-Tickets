@@ -86,7 +86,7 @@ export default async function TourPage({ params }: PageProps) {
                   {tour.difficulty}
                 </span>
               </div>
-              <h1 className="text-3xl font-bold text-gray-900">{tour.title}</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{tour.title}</h1>
               <div className="flex flex-wrap gap-4 text-sm text-gray-600">
                 <span>⏱ {tour.duration}h</span>
                 <span>🌐 {tour.languages.join(', ')}</span>
@@ -95,13 +95,13 @@ export default async function TourPage({ params }: PageProps) {
             </div>
 
             {/* Pricing */}
-            <div className="flex gap-6">
-              <div className="bg-primary/10 rounded-xl px-5 py-4 text-center">
+            <div className="flex gap-3 sm:gap-6">
+              <div className="flex-1 bg-primary/10 rounded-xl px-3 sm:px-5 py-4 text-center">
                 <p className="text-xs text-neutral mb-1">Adult</p>
                 <p className="text-2xl font-bold text-primary">${tour.price}</p>
                 <p className="text-xs text-neutral">USD / person</p>
               </div>
-              <div className="bg-secondary/10 rounded-xl px-5 py-4 text-center">
+              <div className="flex-1 bg-secondary/10 rounded-xl px-3 sm:px-5 py-4 text-center">
                 <p className="text-xs text-neutral mb-1">Child</p>
                 <p className="text-2xl font-bold text-secondary">${tour.childPrice}</p>
                 <p className="text-xs text-neutral">USD / person</p>

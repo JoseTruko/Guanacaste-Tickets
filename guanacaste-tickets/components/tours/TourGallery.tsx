@@ -58,7 +58,7 @@ export default function TourGallery({ images, tourTitle }: TourGalleryProps) {
         {/* Main image */}
         <button
           onClick={() => openLightbox(activeIndex)}
-          className="relative w-full h-[400px] rounded-xl overflow-hidden bg-gray-900 cursor-zoom-in focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+          className="relative w-full h-[260px] sm:h-[340px] md:h-[420px] rounded-xl overflow-hidden bg-gray-900 cursor-zoom-in focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
           aria-label="Open image fullscreen"
         >
           <Image
@@ -77,7 +77,7 @@ export default function TourGallery({ images, tourTitle }: TourGalleryProps) {
               <button
                 key={index}
                 onClick={() => setActiveIndex(index)}
-                className={`relative flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-colors ${
+                className={`relative flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden border-2 transition-colors ${
                   activeIndex === index ? 'border-primary' : 'border-transparent'
                 }`}
                 aria-label={`${tourTitle} - photo ${index + 1}`}
@@ -121,7 +121,7 @@ export default function TourGallery({ images, tourTitle }: TourGalleryProps) {
 
           {/* Image */}
           <div
-            className="relative w-full h-[90vh] max-w-5xl mx-16"
+            className="relative w-full h-[90vh] max-w-5xl mx-4 sm:mx-16"
             onClick={(e) => e.stopPropagation()}
           >
             <Image
