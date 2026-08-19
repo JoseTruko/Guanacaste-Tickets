@@ -74,6 +74,23 @@ export function buildConfirmedHtml(summary: BookingSummary, opts: { paymentLink?
   `;
 }
 
+export function buildConfirmedAdminHtml(
+  summary: BookingSummary,
+  bookingId: string,
+  opts: { paymentLink?: string; comment?: string }
+): string {
+  return `
+    <h2 style="color:#1B6B3A">Reserva confirmada — Guanacaste Tickets</h2>
+    <p><strong>Cliente:</strong> ${summary.customerName}</p>
+    <p><strong>Email:</strong> <a href="mailto:${summary.customerEmail}">${summary.customerEmail}</a></p>
+    ${summary.customerPhone ? `<p><strong>Teléfono:</strong> ${summary.customerPhone}</p>` : ''}
+    ${itemsTable(summary, { showChildren: true })}
+    ${opts.paymentLink ? `<p><strong>Link de pago:</strong> <a href="${opts.paymentLink}">${opts.paymentLink}</a></p>` : ''}
+    ${opts.comment ? `<p><strong>Comentario:</strong> ${opts.comment}</p>` : ''}
+    <p style="margin-top:16px"><a href="${SITE_URL}/admin/bookings?open=${bookingId}" style="color:#1B6B3A">Ver reserva →</a></p>
+  `;
+}
+
 export function buildCancelledHtml(summary: BookingSummary, reason?: string): string {
   return `
     <h2 style="color:#1B6B3A">Your booking was cancelled</h2>

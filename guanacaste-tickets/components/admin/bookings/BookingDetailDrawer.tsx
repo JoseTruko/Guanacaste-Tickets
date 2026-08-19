@@ -4,18 +4,26 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import type { Booking } from '@/types/index';
 import { effectiveStatus } from '@/lib/bookings/status';
-import { confirmBooking, cancelBooking } from '@/app/admin/(dashboard)/bookings/actions';
+import { confirmBooking, cancelBooking, deleteBooking } from '@/app/admin/(dashboard)/bookings/actions';
 import Button from '@/components/ui/Button';
 import StatusBadge from './StatusBadge';
 
-export default function BookingDetailDrawer({ booking, onClose }: { booking: Booking; onClose: () => void }) {
+export default function BookingDetailDrawer({
+  booking,
+  isAdmin,
+  onClose,
+}: {
+  booking: Booking;
+  isAdmin: boolean;
+  onClose: () => void;
+}) {
   const router = useRouter();
   const status = effectiveStatus(booking);
 
   const [paymentLink, setPaymentLink] = useState(booking.paymentLink ?? '');
   const [comment, setComment] = useState(booking.adminComment ?? '');
   const [reason, setReason] = useState('');
-  const [loading, setLoading] = useState<'confirm' | 'cancel' | null>(null);
+  const [loading, setLoading] = useState<'confirm' | 'cancel' | 'delete' | null>(null);
   const [error, setError] = useState('');
 
   const handleConfirm = async () => {
@@ -33,6 +41,17 @@ export default function BookingDetailDrawer({ booking, onClose }: { booking: Boo
     setLoading('cancel');
     setError('');
     const result = await cancelBooking(booking.id, { reason });
+    setLoading(null);
+    if (!result.ok) return setError(result.error);
+    router.refresh();
+    onClose();
+  };
+
+  const handleDelete = async () => {
+    if (!confirm('¿Eliminar esta reserva permanentemente? Esta acción no se puede deshacer y no se notifica al cliente.')) return;
+    setLoading('delete');
+    setError('');
+    const result = await deleteBooking(booking.id);
     setLoading(null);
     if (!result.ok) return setError(result.error);
     router.refresh();
@@ -58,7 +77,7 @@ export default function BookingDetailDrawer({ booking, onClose }: { booking: Boo
             <p><span className="text-gray-500">Email:</span> <a href={`mailto:${booking.customerEmail}`} className="text-primary hover:underline">{booking.customerEmail}</a></p>
             {booking.customerPhone && <p><span className="text-gray-500">Teléfono:</span> {booking.customerPhone}</p>}
             {booking.customerLanguage && <p><span className="text-gray-500">Idioma:</span> {booking.customerLanguage}</p>}
-            <p><span className="text-gray-500">Creada:</span> {new Date(booking.createdAt).toLocaleString()}</p>
+            <p><span className="text-gray-500">Creada:</span> {new Date(booking.createdAt).toLocaleString('es-CR', { timeZone: 'America/Costa_Rica', dateStyle: 'medium', timeStyle: 'short' })}</p>
           </section>
 
           <section>
@@ -101,30 +120,12 @@ export default function BookingDetailDrawer({ booking, onClose }: { booking: Boo
                   className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary resize-y"
                 />
               </div>
-              <div>
-                <label className="block text-xs font-medium text-gray-700 mb-1">Motivo de cancelación (si vas a cancelar)</label>
-                <input
-                  type="text"
-                  value={reason}
-                  onChange={(e) => setReason(e.target.value)}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-                />
-              </div>
 
               {error && <p className="text-red-600 text-sm">{error}</p>}
 
-              <div className="flex gap-2 pt-1">
-                <Button onClick={handleConfirm} disabled={loading !== null} className="flex-1">
-                  {loading === 'confirm' ? 'Confirmando…' : 'Confirmar reserva'}
-                </Button>
-                <button
-                  onClick={handleCancel}
-                  disabled={loading !== null}
-                  className="flex-1 text-sm font-semibold text-red-600 bg-red-50 hover:bg-red-100 rounded-md transition-colors disabled:opacity-50"
-                >
-                  {loading === 'cancel' ? 'Cancelando…' : 'Cancelar'}
-                </button>
-              </div>
+              <Button onClick={handleConfirm} disabled={loading !== null} className="w-full">
+                {loading === 'confirm' ? 'Confirmando…' : 'Confirmar reserva'}
+              </Button>
             </section>
           )}
 
@@ -137,10 +138,47 @@ export default function BookingDetailDrawer({ booking, onClose }: { booking: Boo
             </section>
           )}
 
+          {(status === 'pending' || status === 'confirmed') && (
+            <section className="space-y-3 border-t border-gray-100 pt-4">
+              <h3 className="text-sm font-semibold text-gray-900">Cancelar reserva</h3>
+              <div>
+                <label className="block text-xs font-medium text-gray-700 mb-1">Motivo (se incluye en el correo al cliente)</label>
+                <input
+                  type="text"
+                  value={reason}
+                  onChange={(e) => setReason(e.target.value)}
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                />
+              </div>
+
+              {status === 'confirmed' && error && <p className="text-red-600 text-sm">{error}</p>}
+
+              <button
+                onClick={handleCancel}
+                disabled={loading !== null}
+                className="w-full text-sm font-semibold text-red-600 bg-red-50 hover:bg-red-100 py-2.5 rounded-md transition-colors disabled:opacity-50"
+              >
+                {loading === 'cancel' ? 'Cancelando…' : 'Cancelar reserva'}
+              </button>
+            </section>
+          )}
+
           {booking.cancelledReason && (
             <section className="border-t border-gray-100 pt-4 text-sm">
               <p className="text-gray-500">Motivo de cancelación:</p>
               <p className="text-gray-900">{booking.cancelledReason}</p>
+            </section>
+          )}
+
+          {isAdmin && (
+            <section className="border-t border-gray-100 pt-4">
+              <button
+                onClick={handleDelete}
+                disabled={loading !== null}
+                className="text-xs text-gray-400 hover:text-red-600 transition-colors disabled:opacity-50"
+              >
+                {loading === 'delete' ? 'Eliminando…' : 'Eliminar reserva'}
+              </button>
             </section>
           )}
         </div>

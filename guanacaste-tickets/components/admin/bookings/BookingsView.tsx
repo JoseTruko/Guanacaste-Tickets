@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import type { Booking, BookingStatus } from '@/types/index';
 import { effectiveStatus } from '@/lib/bookings/status';
@@ -8,18 +9,25 @@ import StatusBadge from './StatusBadge';
 import BookingDetailDrawer from './BookingDetailDrawer';
 
 const TABS: { value: BookingStatus | 'all'; label: string }[] = [
+  { value: 'all', label: 'Todas' },
   { value: 'pending', label: 'Pendientes' },
   { value: 'confirmed', label: 'Confirmadas' },
   { value: 'cancelled', label: 'Canceladas' },
   { value: 'completed', label: 'Completadas' },
-  { value: 'all', label: 'Todas' },
 ];
 
-export default function BookingsView({ bookings }: { bookings: Booking[] }) {
+const STATUS_PRIORITY: Record<BookingStatus, number> = {
+  pending: 0,
+  confirmed: 1,
+  completed: 2,
+  cancelled: 3,
+};
+
+export default function BookingsView({ bookings, isAdmin }: { bookings: Booking[]; isAdmin: boolean }) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const initialTab = (searchParams.get('status') as BookingStatus | null) ?? 'pending';
+  const initialTab = (searchParams.get('status') as BookingStatus | null) ?? 'all';
   const [tab, setTab] = useState<BookingStatus | 'all'>(initialTab);
   const [search, setSearch] = useState('');
   const [openId, setOpenId] = useState<string | null>(searchParams.get('open'));
@@ -31,7 +39,7 @@ export default function BookingsView({ bookings }: { bookings: Booking[] }) {
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
-    return withStatus.filter(({ booking, status }) => {
+    const matches = withStatus.filter(({ booking, status }) => {
       if (tab !== 'all' && status !== tab) return false;
       if (!q) return true;
       return (
@@ -40,6 +48,11 @@ export default function BookingsView({ bookings }: { bookings: Booking[] }) {
         booking.items.some((i) => i.tourTitle.toLowerCase().includes(q))
       );
     });
+
+    if (tab === 'all') {
+      return [...matches].sort((a, b) => STATUS_PRIORITY[a.status] - STATUS_PRIORITY[b.status]);
+    }
+    return matches;
   }, [withStatus, tab, search]);
 
   const selected = openId ? bookings.find((b) => b.id === openId) ?? null : null;
@@ -56,9 +69,17 @@ export default function BookingsView({ bookings }: { bookings: Booking[] }) {
 
   return (
     <div className="space-y-4">
-      <div>
-        <h1 className="font-heading font-bold text-2xl text-gray-900">Reservas</h1>
-        <p className="text-sm text-gray-500 mt-1">{bookings.length} reservas en total.</p>
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <h1 className="font-heading font-bold text-2xl text-gray-900">Reservas</h1>
+          <p className="text-sm text-gray-500 mt-1">{bookings.length} reservas en total.</p>
+        </div>
+        <Link
+          href="/admin/bookings/new"
+          className="shrink-0 inline-flex items-center justify-center bg-primary text-white px-4 py-2 rounded-md font-semibold text-sm hover:bg-primary-hover transition-colors"
+        >
+          + Nueva reserva
+        </Link>
       </div>
 
       <div className="flex flex-col sm:flex-row sm:items-center gap-3">
@@ -122,7 +143,7 @@ export default function BookingsView({ bookings }: { bookings: Booking[] }) {
                       <StatusBadge status={status} />
                     </td>
                     <td className="px-4 py-3 text-gray-500 whitespace-nowrap">
-                      {new Date(booking.createdAt).toLocaleDateString()}
+                      {new Date(booking.createdAt).toLocaleDateString('es-CR', { timeZone: 'America/Costa_Rica' })}
                     </td>
                   </tr>
                 );
@@ -139,7 +160,7 @@ export default function BookingsView({ bookings }: { bookings: Booking[] }) {
         </div>
       </div>
 
-      {selected && <BookingDetailDrawer booking={selected} onClose={closeDrawer} />}
+      {selected && <BookingDetailDrawer booking={selected} isAdmin={isAdmin} onClose={closeDrawer} />}
     </div>
   );
 }
