@@ -1,9 +1,20 @@
-type Variant = 'featured' | 'free-cancellation' | 'default';
+type Variant =
+  | 'featured'
+  | 'free-cancellation'
+  | 'default'
+  | 'pending'
+  | 'confirmed'
+  | 'cancelled'
+  | 'completed';
 
 const variantClasses: Record<Variant, string> = {
   featured: 'bg-tertiary text-gray-900',
   'free-cancellation': 'bg-secondary text-white',
   default: 'bg-gray-100 text-gray-700',
+  pending: 'bg-amber-100 text-amber-800',
+  confirmed: 'bg-primary/10 text-primary',
+  cancelled: 'bg-red-100 text-red-700',
+  completed: 'bg-gray-200 text-gray-600',
 };
 
 type BadgeProps = {

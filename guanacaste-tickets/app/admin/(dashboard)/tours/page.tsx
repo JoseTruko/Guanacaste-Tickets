@@ -2,19 +2,11 @@
 
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
-import AdminAuth from '@/components/admin/AdminAuth';
 import TourForm from '@/components/admin/TourForm';
+import Button from '@/components/ui/Button';
 import type { Tour } from '@/types/index';
 
 export default function AdminToursPage() {
-  return (
-    <AdminAuth>
-      {(password) => <ToursManager password={password} />}
-    </AdminAuth>
-  );
-}
-
-function ToursManager({ password }: { password: string }) {
   const [tours, setTours] = useState<Tour[]>([]);
   const [editing, setEditing] = useState<Tour | null>(null);
   const [creating, setCreating] = useState(false);
@@ -31,7 +23,7 @@ function ToursManager({ password }: { password: string }) {
 
   const handleDelete = async (id: string) => {
     if (!confirm('Delete this tour?')) return;
-    await fetch(`/api/tours/${id}`, { method: 'DELETE', headers: { 'x-admin-password': password } });
+    await fetch(`/api/tours/${id}`, { method: 'DELETE' });
     load();
   };
 
@@ -39,7 +31,7 @@ function ToursManager({ password }: { password: string }) {
     const isNew = !tour.id || tour.id === '';
     const method = isNew ? 'POST' : 'PUT';
     const url = isNew ? '/api/tours' : `/api/tours/${tour.id}`;
-    await fetch(url, { method, headers: { 'Content-Type': 'application/json', 'x-admin-password': password }, body: JSON.stringify(tour) });
+    await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(tour) });
     setEditing(null);
     setCreating(false);
     load();
@@ -51,7 +43,7 @@ function ToursManager({ password }: { password: string }) {
         <button onClick={() => { setEditing(null); setCreating(false); }} className="text-sm text-gray-500 hover:text-gray-800 mb-4 inline-flex items-center gap-1">
           ← Back to list
         </button>
-        <TourForm initial={editing ?? undefined} onSave={handleSave} password={password} />
+        <TourForm initial={editing ?? undefined} onSave={handleSave} />
       </div>
     );
   }
@@ -60,9 +52,7 @@ function ToursManager({ password }: { password: string }) {
     <div>
       <div className="flex items-center justify-between mb-6">
         <h1 className="font-heading font-bold text-2xl text-gray-900">Tours</h1>
-        <button onClick={() => setCreating(true)} className="bg-[#0077B6] text-white font-semibold px-4 py-2 rounded-md hover:bg-[#005f8e] transition-colors text-sm">
-          + New Tour
-        </button>
+        <Button onClick={() => setCreating(true)} size="sm">+ New Tour</Button>
       </div>
 
       {loading ? (
@@ -98,7 +88,7 @@ function ToursManager({ password }: { password: string }) {
                 <div className="flex gap-2 mt-2">
                   <button
                     onClick={() => setEditing(tour)}
-                    className="flex-1 inline-flex items-center justify-center gap-1.5 text-sm font-semibold text-[#0077B6] bg-[#0077B6]/10 hover:bg-[#0077B6]/20 rounded-md py-2 transition-colors"
+                    className="flex-1 inline-flex items-center justify-center gap-1.5 text-sm font-semibold text-primary bg-primary/10 hover:bg-primary/20 rounded-md py-2 transition-colors"
                   >
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5" />

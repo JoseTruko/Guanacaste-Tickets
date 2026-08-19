@@ -96,6 +96,19 @@ export interface BookingResult {
   message: string;
 }
 
+export type BookingStatus = 'pending' | 'confirmed' | 'cancelled' | 'completed';
+
+export interface Booking extends BookingSummary {
+  id: string;
+  status: BookingStatus;
+  createdAt: string;
+  paymentLink?: string;
+  adminComment?: string;
+  confirmedAt?: string;
+  confirmedBy?: string;
+  cancelledReason?: string;
+}
+
 export interface PaymentAdapter {
   processBooking(summary: BookingSummary): Promise<BookingResult>;
 }

@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase/client';
+import { getStaffUser } from '@/lib/supabase/server';
 
 export async function POST(req: Request) {
-  if (req.headers.get('x-admin-password') !== process.env.ADMIN_PASSWORD) {
+  if (!(await getStaffUser())) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 

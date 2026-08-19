@@ -3,10 +3,11 @@
 import { useEffect, useState } from 'react';
 import type { Tour } from '@/types/index';
 import ImageUploader from './ImageUploader';
+import Button from '@/components/ui/Button';
 import { CATEGORIES } from '@/lib/data/categories';
 import { PLACES } from '@/lib/data/places';
 
-type Props = { initial?: Tour; onSave: (t: Tour) => void; password: string };
+type Props = { initial?: Tour; onSave: (t: Tour) => void };
 
 const empty: Tour = {
   id: '', slug: '', title: '', description: '', shortDescription: '',
@@ -17,7 +18,7 @@ const empty: Tour = {
   faqs: [], cancellationPolicy: { description: '', freeCancellation: true, deadlineHours: 24 },
 };
 
-export default function TourForm({ initial, onSave, password }: Props) {
+export default function TourForm({ initial, onSave }: Props) {
   const [t, setT] = useState<Tour>(initial ?? empty);
   const [saving, setSaving] = useState(false);
 
@@ -95,7 +96,7 @@ export default function TourForm({ initial, onSave, password }: Props) {
         type={type}
         value={t[key] as string | number}
         onChange={(e) => set(key, type === 'number' ? Number(e.target.value) : e.target.value)}
-        className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0077B6]"
+        className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
       />
     </div>
   );
@@ -107,7 +108,7 @@ export default function TourForm({ initial, onSave, password }: Props) {
         rows={rows}
         value={t[key] as string}
         onChange={(e) => set(key, e.target.value)}
-        className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0077B6] resize-y"
+        className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary resize-y"
       />
     </div>
   );
@@ -119,7 +120,7 @@ export default function TourForm({ initial, onSave, password }: Props) {
         rows={3}
         value={(t[key] as string[]).join('\n')}
         onChange={(e) => setArr(key, e.target.value)}
-        className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0077B6] resize-y"
+        className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary resize-y"
       />
     </div>
   );
@@ -310,14 +311,14 @@ export default function TourForm({ initial, onSave, password }: Props) {
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Categoría</label>
           <select value={t.category} onChange={(e) => set('category', e.target.value)}
-            className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0077B6]">
+            className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary">
             {CATEGORIES.map((c) => <option key={c}>{c}</option>)}
           </select>
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Lugar</label>
           <select value={t.location ?? ''} onChange={(e) => set('location', e.target.value || undefined)}
-            className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0077B6]">
+            className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary">
             <option value="">—</option>
             {PLACES.map((p) => <option key={p.slug} value={p.name}>{p.name}</option>)}
           </select>
@@ -325,7 +326,7 @@ export default function TourForm({ initial, onSave, password }: Props) {
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Dificultad</label>
           <select value={t.difficulty} onChange={(e) => set('difficulty', e.target.value as Tour['difficulty'])}
-            className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0077B6]">
+            className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary">
             {['Easy', 'Moderate', 'Challenging'].map((d) => <option key={d}>{d}</option>)}
           </select>
         </div>
@@ -349,7 +350,7 @@ export default function TourForm({ initial, onSave, password }: Props) {
             placeholder="Descripción"
             value={t.cancellationPolicy.description}
             onChange={(e) => set('cancellationPolicy', { ...t.cancellationPolicy, description: e.target.value })}
-            className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0077B6]"
+            className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
           />
           <div className="flex items-center gap-4">
             <label className="flex items-center gap-2 text-sm">
@@ -362,7 +363,7 @@ export default function TourForm({ initial, onSave, password }: Props) {
               placeholder="Horas límite"
               value={t.cancellationPolicy.deadlineHours ?? ''}
               onChange={(e) => set('cancellationPolicy', { ...t.cancellationPolicy, deadlineHours: Number(e.target.value) })}
-              className="w-32 border border-gray-300 rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#0077B6]"
+              className="w-32 border border-gray-300 rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
         </div>
@@ -370,13 +371,12 @@ export default function TourForm({ initial, onSave, password }: Props) {
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">Imágenes</label>
-        <ImageUploader images={t.images} onChange={(imgs) => set('images', imgs)} password={password} />
+        <ImageUploader images={t.images} onChange={(imgs) => set('images', imgs)} />
       </div>
 
-      <button type="submit" disabled={saving}
-        className="w-full bg-[#0077B6] text-white font-semibold py-2.5 rounded-md hover:bg-[#005f8e] transition-colors disabled:opacity-50">
+      <Button type="submit" disabled={saving} className="w-full">
         {saving ? 'Guardando…' : 'Guardar tour'}
-      </button>
+      </Button>
     </form>
   );
 }

@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase/client';
+import { getStaffUser } from '@/lib/supabase/server';
 import { getAllTours } from '@/lib/data/tours';
 
 // One-time seed endpoint — call once then delete or disable
-export async function POST(req: Request) {
-  if (req.headers.get('x-admin-password') !== process.env.ADMIN_PASSWORD) {
+export async function POST() {
+  if (!(await getStaffUser())) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 

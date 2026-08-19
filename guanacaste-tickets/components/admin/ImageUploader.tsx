@@ -6,10 +6,9 @@ import Image from 'next/image';
 type Props = {
   images: string[];
   onChange: (images: string[]) => void;
-  password: string;
 };
 
-export default function ImageUploader({ images, onChange, password }: Props) {
+export default function ImageUploader({ images, onChange }: Props) {
   const [uploading, setUploading] = useState(false);
 
   const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -18,7 +17,7 @@ export default function ImageUploader({ images, onChange, password }: Props) {
     setUploading(true);
     const fd = new FormData();
     fd.append('file', file);
-    const res = await fetch('/api/upload', { method: 'POST', headers: { 'x-admin-password': password }, body: fd });
+    const res = await fetch('/api/upload', { method: 'POST', body: fd });
     const json = await res.json();
     if (json.url) onChange([...images, json.url]);
     setUploading(false);

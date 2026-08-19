@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { supabase, supabaseAdmin } from '@/lib/supabase/client';
+import { getStaffUser } from '@/lib/supabase/server';
 import { getAllTours } from '@/lib/data/tours';
 import type { Tour } from '@/types/index';
 
@@ -16,7 +17,7 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  if (!isAdmin(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  if (!(await getStaffUser())) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const body = await req.json();
   let includePricingBrackets = true;
@@ -63,10 +64,6 @@ export function isMissingTransportZonesColumnError(error: any) {
 
 export function isMissingTransportRequiredColumnError(error: any) {
   return typeof error?.message === 'string' && error.message.includes('transport_required');
-}
-
-function isAdmin(req: Request) {
-  return req.headers.get('x-admin-password') === process.env.ADMIN_PASSWORD;
 }
 
 export function tourToDb(t: Tour, includePricingBrackets = true, includeTransportZones = true, includeTransportRequired = true) {
