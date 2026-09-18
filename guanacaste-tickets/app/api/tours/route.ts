@@ -23,7 +23,8 @@ export async function POST(req: Request) {
   let includePricingBrackets = true;
   let includeTransportZones = true;
   let includeTransportRequired = true;
-  let payload = tourToDb(body, includePricingBrackets, includeTransportZones, includeTransportRequired);
+  let includeExclusiveType = true;
+  let payload = tourToDb(body, includePricingBrackets, includeTransportZones, includeTransportRequired, includeExclusiveType);
   let { data, error } = await supabaseAdmin
     .from('tours')
     .insert(payload)
@@ -32,19 +33,25 @@ export async function POST(req: Request) {
 
   if (error && isMissingPricingBracketsColumnError(error)) {
     includePricingBrackets = false;
-    payload = tourToDb(body, includePricingBrackets, includeTransportZones, includeTransportRequired);
+    payload = tourToDb(body, includePricingBrackets, includeTransportZones, includeTransportRequired, includeExclusiveType);
     ({ data, error } = await supabaseAdmin.from('tours').insert(payload).select().single());
   }
 
   if (error && isMissingTransportZonesColumnError(error)) {
     includeTransportZones = false;
-    payload = tourToDb(body, includePricingBrackets, includeTransportZones, includeTransportRequired);
+    payload = tourToDb(body, includePricingBrackets, includeTransportZones, includeTransportRequired, includeExclusiveType);
     ({ data, error } = await supabaseAdmin.from('tours').insert(payload).select().single());
   }
 
   if (error && isMissingTransportRequiredColumnError(error)) {
     includeTransportRequired = false;
-    payload = tourToDb(body, includePricingBrackets, includeTransportZones, includeTransportRequired);
+    payload = tourToDb(body, includePricingBrackets, includeTransportZones, includeTransportRequired, includeExclusiveType);
+    ({ data, error } = await supabaseAdmin.from('tours').insert(payload).select().single());
+  }
+
+  if (error && isMissingExclusiveTypeColumnError(error)) {
+    includeExclusiveType = false;
+    payload = tourToDb(body, includePricingBrackets, includeTransportZones, includeTransportRequired, includeExclusiveType);
     ({ data, error } = await supabaseAdmin.from('tours').insert(payload).select().single());
   }
 
@@ -66,7 +73,11 @@ export function isMissingTransportRequiredColumnError(error: any) {
   return typeof error?.message === 'string' && error.message.includes('transport_required');
 }
 
-export function tourToDb(t: Tour, includePricingBrackets = true, includeTransportZones = true, includeTransportRequired = true) {
+export function isMissingExclusiveTypeColumnError(error: any) {
+  return typeof error?.message === 'string' && error.message.includes('exclusive_type');
+}
+
+export function tourToDb(t: Tour, includePricingBrackets = true, includeTransportZones = true, includeTransportRequired = true, includeExclusiveType = true) {
   const id = typeof t.id === 'string' && t.id.trim() ? t.id : `tour-${Date.now()}`;
   const slug = typeof t.slug === 'string' && t.slug.trim()
     ? t.slug
@@ -109,6 +120,10 @@ export function tourToDb(t: Tour, includePricingBrackets = true, includeTranspor
     payload.transport_required = t.transportRequired ?? false;
   }
 
+  if (includeExclusiveType) {
+    payload.exclusive_type = t.exclusiveType ?? null;
+  }
+
   return payload;
 }
 
@@ -132,6 +147,7 @@ export function dbToTour(r: any): Tour {
     pricingBrackets: r.pricing_brackets ?? [],
     transportZones: r.transport_zones ?? [],
     transportRequired: r.transport_required ?? false,
+    exclusiveType: r.exclusive_type ?? undefined,
     images: r.images,
     featured: r.featured,
     included: r.included,

@@ -25,6 +25,7 @@ export default function AllToursSection({
   const [category, setCategory] = useState(initialCategory);
   const [location, setLocation] = useState('All');
   const [difficulty, setDifficulty] = useState('All');
+  const [exclusiveType, setExclusiveType] = useState('All');
 
   useEffect(() => {
     setCategory(initialCategory);
@@ -40,11 +41,12 @@ export default function AllToursSection({
     return Array.from(new Set(allTours.map((t) => t.difficulty)));
   }, [allTours]);
 
-  const hasActiveFilters = category !== 'All' || location !== 'All' || difficulty !== 'All' || searchQuery.trim() !== '';
+  const hasActiveFilters = category !== 'All' || location !== 'All' || difficulty !== 'All' || exclusiveType !== 'All' || searchQuery.trim() !== '';
   const clearFilters = () => {
     setCategory('All');
     setLocation('All');
     setDifficulty('All');
+    setExclusiveType('All');
     onSearchChange('');
   };
 
@@ -55,9 +57,10 @@ export default function AllToursSection({
       (t) =>
         (location === 'All' || t.location === location) &&
         (difficulty === 'All' || t.difficulty === difficulty) &&
+        (exclusiveType === 'All' || t.exclusiveType === exclusiveType) &&
         (!q || t.title.toLowerCase().includes(q) || t.shortDescription?.toLowerCase().includes(q))
     );
-  }, [allTours, searchQuery, location, difficulty]);
+  }, [allTours, searchQuery, location, difficulty, exclusiveType]);
 
   const categoryCounts = useMemo(() => {
     const counts: Record<string, number> = {};
@@ -112,6 +115,14 @@ export default function AllToursSection({
                 onChange={setLocation}
               />
             )}
+
+            <FilterDropdown
+              label="Exclusive adventures"
+              allLabel="All adventures"
+              options={['Private Excursions', 'Signature Experiences']}
+              value={exclusiveType}
+              onChange={setExclusiveType}
+            />
 
             {hasActiveFilters && (
               <button

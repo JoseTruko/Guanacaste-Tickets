@@ -45,6 +45,7 @@ export interface Tour {
   category: TourCategory;
   location?: string;
   difficulty: 'Easy' | 'Moderate' | 'Challenging';
+  exclusiveType?: 'Private Excursions' | 'Signature Experiences';
   languages: string[];
   minGroupSize: number;
   images: string[];

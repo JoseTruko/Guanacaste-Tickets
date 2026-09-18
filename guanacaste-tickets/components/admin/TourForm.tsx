@@ -12,7 +12,7 @@ type Props = { initial?: Tour; onSave: (t: Tour) => void };
 const empty: Tour = {
   id: '', slug: '', title: '', description: '', shortDescription: '',
   price: 0, childPrice: 0, pricingBrackets: [], transportZones: [], transportRequired: false, currency: 'USD', duration: 0,
-  category: 'Adventure', location: undefined, difficulty: 'Easy', languages: ['English', 'Spanish'],
+  category: 'Adventure', location: undefined, difficulty: 'Easy', exclusiveType: undefined, languages: ['English', 'Spanish'],
   minGroupSize: 10, images: [], featured: false,
   included: [], notIncluded: [], meetingPoint: '', whatToBring: [],
   faqs: [], cancellationPolicy: { description: '', freeCancellation: true, deadlineHours: 24 },
@@ -333,6 +333,15 @@ export default function TourForm({ initial, onSave }: Props) {
         <div className="flex items-center gap-2 pt-6">
           <input type="checkbox" id="featured" checked={t.featured} onChange={(e) => set('featured', e.target.checked)} className="w-4 h-4" />
           <label htmlFor="featured" className="text-sm font-medium text-gray-700">Destacado</label>
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Exclusive adventures</label>
+          <select value={t.exclusiveType ?? ''} onChange={(e) => set('exclusiveType', e.target.value || undefined)}
+            className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary">
+            <option value="">—</option>
+            <option value="Private Excursions">Private Excursions</option>
+            <option value="Signature Experiences">Signature Experiences</option>
+          </select>
         </div>
       </div>
 
